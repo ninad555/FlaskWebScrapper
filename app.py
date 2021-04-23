@@ -400,5 +400,7 @@ def Dashboard():
 
     except Exception as e:
                  print(e)
+
+PORT = int(os.environ.get('PORT', 8000))
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(port =PORT, debug=True)
