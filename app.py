@@ -13,7 +13,7 @@ import pymongo
 import plotly as py
 import plotly.graph_objects as go
 import json
-import time
+import threading
 import os
 
 
@@ -164,54 +164,45 @@ def get_scatter_plot():
     return graphJSON
 
 
+#free_status = True
+collection_name = None
+
 app = Flask(__name__)
 
+#To avoid the time out issue on heroku
+class threadClass:
 
-@app.route("/Dashboard" , methods = ["GET" , "POST"])
-@cross_origin()
-def Dashboard():
-    try:
-        bar = get_pie_chart()
-        logger.info("Bar graph created")
-        Scatter = get_scatter_plot()
-        logger.info("Scatter plot created")
-        return render_template( "Dashboard.html", plot = bar, Scatter = Scatter )
+    def __init__(self, required_reviews, searchstring,review_count,reviews):
+        self.required_reviews = required_reviews
+        self.searchstring = searchstring
+        self.review_count = review_count
+        self.reviews = reviews
+        thread = threading.Thread(target=self.run, args=())
+        thread.daemon = True  # Daemonize thread
+        thread.start()  # Start the execution
 
-    except Exception as e:
-                 print(e)
+    def run(self):
+        global collection_name, free_status
+        free_status = False
+        collection_name = self.reviews(required_reviews= self.required_reviews, searchstring= self.searchstring,
+                                       review_count = self.review_count)
 
-@app.route("/detail", methods=["POST", "GET"])
-@cross_origin()
-def detail():
-    try:
-        products = []
-        product_highlights = []
-        flipkart_url = "https://www.flipkart.com/search?q=" + searchstring
-        uClient = uReq(flipkart_url)
-        flipkartpage = uClient.read()
-        uClient.close()
-        flipkart_html = bs(flipkartpage, "html.parser")
-        boxes = flipkart_html.findAll("div", {"class": "_1AtVbE col-12-12"})
-        del boxes[0:3]
-        box = boxes[0]
-        productLink = "https://www.flipkart.com" + box.div.div.div.a['href']
-        prodRes = requests.get(productLink)
-        prod_html = bs(prodRes.text, "html.parser")
-        product_deatil = product_details(prod_html,productLink,searchstring)
-        products.extend(product_deatil)
+        logger.info("Thread run completed")
+        free_status = True
 
-        return render_template("details.html", prod_details=products)
-
-    except Exception as e:
-          print(e)
 
 @app.route("/", methods=["POST", "GET"])
 @cross_origin()
 def index():
-
-    global max_reviews_pages
-    global searchstring
     if request.method == "POST":
+        free_status = True
+        global max_reviews_pages
+        global searchstring
+        ## To maintain the internal server issue on heroku
+        if free_status != True:
+            return "This website is executing some process .Please visit later"
+        else:
+            free_status = True
         searchstring = request.form['content'].replace("", "")
         required_reviews = int(request.form['expected_review'])
 
@@ -370,7 +361,8 @@ def index():
                                         review_count = review_count + 1
                                         print(len(details))
 
-
+                        threadClass(required_reviews=required_reviews, searchstring=searchstring,
+                                    review_count=review_count)
                     x1 = table.insert_many(details)
                     saveDataFrameToFile( dataframe=details, file_name=filename)
 
@@ -382,6 +374,8 @@ def index():
 
                 logger.info("Data Saved")
                 saveDataFrameToFile(dataframe=details, file_name=filename)
+                threadClass(required_reviews=required_reviews, searchstring=searchstring,
+                            review_count=review_count)
                 return render_template("results.html", reviews=details)
 
 
@@ -390,6 +384,42 @@ def index():
     else:
         return render_template("index.html")
 
+@app.route("/detail", methods=["POST", "GET"])
+@cross_origin()
+def detail():
+    try:
+        products = []
+        product_highlights = []
+        flipkart_url = "https://www.flipkart.com/search?q=" + searchstring
+        uClient = uReq(flipkart_url)
+        flipkartpage = uClient.read()
+        uClient.close()
+        flipkart_html = bs(flipkartpage, "html.parser")
+        boxes = flipkart_html.findAll("div", {"class": "_1AtVbE col-12-12"})
+        del boxes[0:3]
+        box = boxes[0]
+        productLink = "https://www.flipkart.com" + box.div.div.div.a['href']
+        prodRes = requests.get(productLink)
+        prod_html = bs(prodRes.text, "html.parser")
+        product_deatil = product_details(prod_html,productLink,searchstring)
+        products.extend(product_deatil)
 
+        return render_template("details.html", prod_details=products)
+
+    except Exception as e:
+          print(e)
+
+@app.route("/Dashboard" , methods = ["GET" , "POST"])
+@cross_origin()
+def Dashboard():
+    try:
+        bar = get_pie_chart()
+        logger.info("Bar graph created")
+        Scatter = get_scatter_plot()
+        logger.info("Scatter plot created")
+        return render_template( "Dashboard.html", plot = bar, Scatter = Scatter )
+
+    except Exception as e:
+                 print(e)
 if __name__ == "__main__":
     app.run(debug=True)

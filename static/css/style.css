@@ -5,20 +5,6 @@
 }
 
 body {
-  font-size: large;
-
-  text-align: center;
-  background-image: url("/static/images/back one one.jpeg");
-  padding-top: 4%;
-  background-attachment: fixed;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-
-
-
-body {
   background-color: #91ced4;
 }
 body * {
