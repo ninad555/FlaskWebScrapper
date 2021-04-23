@@ -6,6 +6,10 @@ from bs4 import BeautifulSoup as bs
 from flask import Flask, render_template, request
 from flask_cors import cross_origin
 from requests import get
+from time import sleep
+from random import randint
+from IPython.core.display import clear_output
+from time import time
 
 import pandas as pd
 import numpy as np
@@ -164,45 +168,16 @@ def get_scatter_plot():
     return graphJSON
 
 
-#free_status = True
-collection_name = None
-
 app = Flask(__name__)
 
-#To avoid the time out issue on heroku
-class threadClass:
-
-    def __init__(self, required_reviews, searchstring,review_count,reviews):
-        self.required_reviews = required_reviews
-        self.searchstring = searchstring
-        self.review_count = review_count
-        self.reviews = reviews
-        thread = threading.Thread(target=self.run, args=())
-        thread.daemon = True  # Daemonize thread
-        thread.start()  # Start the execution
-
-    def run(self):
-        global collection_name, free_status
-        free_status = False
-        collection_name = self.reviews(required_reviews= self.required_reviews, searchstring= self.searchstring,
-                                       review_count = self.review_count)
-
-        logger.info("Thread run completed")
-        free_status = True
 
 
 @app.route("/", methods=["POST", "GET"])
 @cross_origin()
 def index():
     if request.method == "POST":
-        free_status = True
         global max_reviews_pages
         global searchstring
-        ## To maintain the internal server issue on heroku
-        if free_status != True:
-            return "This website is executing some process .Please visit later"
-        else:
-            free_status = True
         searchstring = request.form['content'].replace("", "")
         required_reviews = int(request.form['expected_review'])
 
@@ -236,6 +211,7 @@ def index():
                 table = db[searchstring]  # creating a collection with the same name as search string. Tables and Collections are analogous.
                 filename = "static/CSVs"+searchstring+".csv" #  filename to save the details
                 logger.info(f"New file {filename} created")
+                start_time = time()
 
                 """To get the next link"""
                 try:
@@ -294,10 +270,13 @@ def index():
 
                                 " Controlling the request "
                                 try:
+                                    sleep(randint(8, 15))
                                     req += 1
+                                    elapsed_time = time() - start_time
                                     if req > (required_reviews / 10):
                                         logger.info("'Number of requests was greater than expected.'")
-                                        #print('Number of requests was greater than expected.')
+                                        logger.info('Number of requests was greater than expected.')
+                                        clear_output(wait=True)
                                         break
                                     temp_review_page_html = bs(response.text, 'html.parser')
                                     bx = temp_review_page_html.find_all('div', {'class': '_1AtVbE col-12-12'})
