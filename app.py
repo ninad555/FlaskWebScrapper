@@ -13,6 +13,9 @@ import pymongo
 import plotly as py
 import plotly.graph_objects as go
 import json
+import time
+import os
+import redis
 
 logger = getLog("flipkart.py")
 
@@ -133,9 +136,6 @@ def product_details(product_page,productLink,searchstring):
     product_detail.append(dct)
     return product_detail
 
-
-app = Flask(__name__)
-
 def get_pie_chart():
     """
         This function returns pie chart of review ratings
@@ -164,6 +164,11 @@ def get_scatter_plot():
     return graphJSON
 
 
+app = Flask(__name__)
+
+
+
+r = redis.from_url(os.environ.get('REDIS_URL', 'redis://localhost:6379'))
 
 @app.route("/Dashboard" , methods = ["GET" , "POST"])
 @cross_origin()
@@ -206,6 +211,7 @@ def detail():
 @app.route("/", methods=["POST", "GET"])
 @cross_origin()
 def index():
+
     global max_reviews_pages
     global searchstring
     if request.method == "POST":
