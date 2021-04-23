@@ -1,0 +1,39 @@
+2021-04-23 17:33:22,158:INFO:flipkart.py:Database created
+2021-04-23 17:33:48,121:INFO:flipkart.py:Bar graph created
+2021-04-23 17:33:49,262:INFO:flipkart.py:Scatter plot created
+2021-04-23 17:36:36,988:INFO:flipkart.py:Database created
+2021-04-23 17:36:37,286:INFO:flipkart.py:Search begins for iphone7
+2021-04-23 17:36:40,531:INFO:flipkart.py:Url hitted
+2021-04-23 17:36:40,581:INFO:flipkart.py:Reviews Collected
+2021-04-23 17:36:40,582:INFO:flipkart.py:New file static/CSVsiphone7.csv created
+2021-04-23 17:36:40,590:INFO:flipkart.py:Next link hitted
+2021-04-23 17:36:50,713:INFO:flipkart.py:Data Saved
+2021-04-23 17:36:56,867:INFO:flipkart.py:Bar graph created
+2021-04-23 17:36:56,874:INFO:flipkart.py:Scatter plot created
+2021-04-23 17:37:32,838:INFO:flipkart.py:Database created
+2021-04-23 17:37:33,457:INFO:flipkart.py:Search begins for iphoneX
+2021-04-23 17:37:36,144:INFO:flipkart.py:Url hitted
+2021-04-23 17:37:36,191:INFO:flipkart.py:Reviews Collected
+2021-04-23 17:37:36,191:INFO:flipkart.py:New file static/CSVsiphoneX.csv created
+2021-04-23 17:37:36,199:INFO:flipkart.py:Next link hitted
+2021-04-23 17:37:41,762:INFO:flipkart.py:Data Saved
+2021-04-23 17:37:45,378:INFO:flipkart.py:Bar graph created
+2021-04-23 17:37:45,388:INFO:flipkart.py:Scatter plot created
+2021-04-23 17:38:20,945:INFO:flipkart.py:Database created
+2021-04-23 17:38:20,951:INFO:flipkart.py:Search begins for iphoneX
+2021-04-23 17:38:23,139:INFO:flipkart.py:Url hitted
+2021-04-23 17:38:23,201:INFO:flipkart.py:Reviews Collected
+2021-04-23 17:38:23,201:INFO:flipkart.py:New file static/CSVsiphoneX.csv created
+2021-04-23 17:38:23,213:INFO:flipkart.py:Next link hitted
+2021-04-23 17:38:27,205:INFO:flipkart.py:Data Saved
+2021-04-23 17:40:48,191:INFO:flipkart.py:Database created
+2021-04-23 17:40:48,200:INFO:flipkart.py:Search begins for iphone12pro
+2021-04-23 17:40:54,139:INFO:flipkart.py:Url hitted
+2021-04-23 17:40:54,178:INFO:flipkart.py:Reviews Collected
+2021-04-23 17:40:54,179:INFO:flipkart.py:New file static/CSVsiphone12pro.csv created
+2021-04-23 17:40:54,186:INFO:flipkart.py:Next link hitted
+2021-04-23 17:40:58,985:INFO:flipkart.py:Data Saved
+2021-04-23 17:41:05,726:INFO:flipkart.py:Bar graph created
+2021-04-23 17:41:05,736:INFO:flipkart.py:Scatter plot created
+2021-04-23 17:51:54,121:INFO:flipkart.py:Database created
+2021-04-23 17:52:22,116:INFO:flipkart.py:Database created

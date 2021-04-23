@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/index_style.css')}}">
+    <title>Home</title>
+</head>
+<body>
+    <style>
+          body {
+                background-image: url('');
+            }
+        </style>
+        </header>
+        <div class="content">
+            <div class="textBox">
+                <h2>Looking To Buying New Samrt Phone<br>But<span> Worried ?</span>about<span> Reviews!!</span></h2>
+                <p>
+                    Don't Worry ! You can now find out the insights of the products by looking for the <b>Customer Reviews</b> , <b>Total-Rating</b> , With detailed <b>Graphical Representaion</b>.
+                     And Buy it from here. Now it's easy to make Decision😊.</b>
+                    </p>
+                    <br>
+                <form action='/' method="POST">
+                   <label><b>Enter product to be searched:</b></label> <input type="text" name="content" id="content" ><br><br>
+                    <label><b>Enter the expected review count you need:</b></label> <input type="text" name="expected_review" id="expected_review"><br><br>
+                    <!--<label><b>If you have id with you enter here:</b></label> <input type="text" name="id" id="id" ><br><br>-->
+                    <input type="submit" value="Search">
+                  </form>
+                  </li>
+            </div>
+
+            <div class="imgBox">
+                <img src="{{ url_for('static',filename='images/feed_1.jpg')}}" class='scrapper'>
+            </div>
+            <!-- A84AEC
+            0825A9 -->
+        </div>
+        <ul class='thumb'>
+            <li><img src="{{ url_for('static',filename='images/d.png')}}" onclick="imgSlider('{{ url_for('static',filename='images/d.png')}}');changeCircleColur('#98F7ED')"> </li>
+            <li><img src="{{ url_for('static',filename='images/star3.png')}}" onclick="imgSlider('{{ url_for('static',filename='images/star_1.jpg')}}');changeCircleColur('#0825A9')"></li>
+            <li><img src="{{ url_for('static',filename='images/feed_2.png')}}" onclick="imgSlider('{{ url_for('static',filename='images/star3.png')}}');changeCircleColur('#E73A3A')"></li>
+        </ul>
+        <ul class='sci'>
+            <li><a href="https://www.linkedin.com/in/ninad-kadam-4439081b0/"><img src="{{ url_for('static',filename='images/linkedin (1).png')}}"></a></li>
+        </ul>
+    </section>
+    <script type='text/javascript'>
+    function imgSlider(anything){
+        document.querySelector('.scrapper').src=anything;
+    }
+    function changeCircleColur(color){
+        const circle=document.querySelector('.circle')
+        circle.style.background=color;
+    }
+
+    function toggleMenu(){
+        var menuToggle = document.querySelector('.toggle');
+        var navigation = document.querySelector('.navigation')
+        menuToggle.classList.toggle('active')
+        navigation.classList.toggle('active')
+    }
+
+    </script>
+
+
+</body>
+</html>

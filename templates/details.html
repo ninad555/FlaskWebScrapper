@@ -1,0 +1,67 @@
+<html>
+<head>
+    <title>Reviews Scrapper</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+	<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+    <link href="{{ url_for('static',filename='css/result_css.css')}}" media="screen" type="text/css" rel="stylesheet" />
+</head>
+<body>
+
+
+</header>
+	<div class="card-body">
+	<div class="card-main">
+		<div class="card">
+			<div class="circle"></div>
+			<div class="content">
+				<h1>
+					{{prod_details[0]['Product Name']}}
+				</h1>
+
+
+
+
+				<a href="{{prod_details[0]['Product Link']}}">BUY NOW !</a>
+			</div>
+			<div class="image">
+			<img width="500" height="700" src="{{prod_details[0]['Product Image Url']}}">
+			</div>
+		</div>
+	</div>
+
+		<div class="pd">
+			<table>
+				<tr>
+					<th>Product Price<tab>Actual Price</tab> <tab>Discount</tab></th>
+				</tr>
+				<tr>
+					<td>{{prod_details[0]['Price']}}<tab><tab>{{prod_details[0]['MRP']}}<tab><tab>{{prod_details[0]['Discount']}}</td>
+				</tr>
+
+
+				<tr>
+					<th> Easy Payment Options</th>
+				</tr>
+				<tr>
+					<td>{{prod_details[0]['Payment Methods']}}</td>
+
+				</tr>
+
+				<tr>
+					<th> Available Offer</th>
+				</tr>
+				<tr>
+					<td>{{prod_details[0]['Offers']}}</td>
+
+				</tr>
+			</table>
+
+		</div>
+
+</div>
+</body>
+</html>
