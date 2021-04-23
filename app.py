@@ -15,7 +15,7 @@ import plotly.graph_objects as go
 import json
 import time
 import os
-import redis
+
 
 logger = getLog("flipkart.py")
 
@@ -166,9 +166,6 @@ def get_scatter_plot():
 
 app = Flask(__name__)
 
-
-
-r = redis.from_url(os.environ.get('REDIS_URL', 'redis://localhost:6379'))
 
 @app.route("/Dashboard" , methods = ["GET" , "POST"])
 @cross_origin()
