@@ -387,8 +387,7 @@ def index():
                 except Exception as e:
                     print(e)
                     print("Error")
-                threadClass(required_reviews=required_reviews, searchstring=searchstring,
-                            review=details)
+                threadClass(required_reviews=required_reviews,link=flipkart_url ,searchstring=searchstring)
                 logger.info("Data Saved")
                 saveDataFrameToFile(dataframe=details, file_name=filename)
 
@@ -396,8 +395,7 @@ def index():
 
 
         except:
-            threadClass(required_reviews=required_reviews, searchstring=searchstring,
-                        review=reviews)
+            
             return render_template("error.html")
     else:
         return render_template("index.html")
