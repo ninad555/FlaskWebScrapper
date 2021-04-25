@@ -1,4 +1,3 @@
-from flask import Flask, render_template, request, make_response
 from urllib.request import urlopen as uReq
 import requests
 from logger_class import getLog
