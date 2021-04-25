@@ -259,7 +259,7 @@ def index():
                                     next_link = next_link.find_parent().attrs['href']
                                     # next_link="#"
                                     next_review_link = "https://www.flipkart.com" + next_link
-                                    next_review_page = requests.get(next_review_link,timeout =10 ,verify=False)
+                                    next_review_page = requests.get(next_review_link,timeout =60 ,verify=False)
                                     next_page_html = bs(next_review_page.text, 'html.parser')
 
                                     response = get(next_review_link + page)
