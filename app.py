@@ -1,14 +1,14 @@
+from werkzeug.utils import cached_property
 from urllib.request import urlopen as uReq
 import requests
 from logger_class import getLog
 from bs4 import BeautifulSoup as bs
-from flask import Flask, render_template, request
-from flask_cors import cross_origin
+from flask import Flask,render_template,request
 from requests import get
 from time import sleep
 from random import randint
-from IPython.core.display import clear_output
 from time import time
+#from flask_cors import cross_origin
 
 import pandas as pd
 import numpy as np
@@ -16,8 +16,6 @@ import pymongo
 import plotly as py
 import plotly.graph_objects as go
 import json
-import threading
-import os
 
 
 logger = getLog("flipkart.py")
@@ -172,7 +170,6 @@ app = Flask(__name__)
 
 
 @app.route("/", methods=["POST", "GET"])
-@cross_origin()
 def index():
     if request.method == "POST":
         global max_reviews_pages
@@ -275,7 +272,7 @@ def index():
                                     if req > (required_reviews / 10):
                                         logger.info("'Number of requests was greater than expected.'")
                                         logger.info('Number of requests was greater than expected.')
-                                        clear_output(wait=True)
+
                                         break
                                     temp_review_page_html = bs(response.text, 'html.parser')
                                     bx = temp_review_page_html.find_all('div', {'class': '_1AtVbE col-12-12'})
@@ -363,7 +360,6 @@ def index():
         return render_template("index.html")
 
 @app.route("/detail", methods=["POST", "GET"])
-@cross_origin()
 def detail():
     try:
         products = []
@@ -388,7 +384,6 @@ def detail():
           print(e)
 
 @app.route("/Dashboard" , methods = ["GET" , "POST"])
-@cross_origin()
 def Dashboard():
     try:
         bar = get_pie_chart()
@@ -401,4 +396,4 @@ def Dashboard():
                  print(e)
 
 if __name__ == "__main__":
-    app.run(port=5000,debug=True)
+    app.run()

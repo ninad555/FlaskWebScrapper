@@ -1,49 +1,49 @@
-backcall
-beautifulsoup4
+backcall #@ file:///home/ktietz/src/ci/backcall_1611930011877/work
+beautifulsoup4 #@ file:///C:/ci/beautifulsoup4_1605284236619/work
 brotlipy==0.7.0
 bs4==0.0.1
 certifi==2020.12.5
-cffi
-chardet
-click
-colorama
-cryptography
-decorator==5.0.7
-Flask
-Flask-Cors
+cffi #@ file:///C:/ci/cffi_1613247431367/work
+chardet #@ file:///C:/ci/chardet_1605296577955/work
+click #@ file:///home/linux1/recipes/ci/click_1610990599742/work
+colorama #@ file:///tmp/build/80754af9/colorama_1607707115595/work
+cryptography #@ file:///C:/ci/cryptography_1616769504165/work
+decorator #@ file:///tmp/build/80754af9/decorator_1617916966915/work
+Flask==1.1.2
+Flask-Cors==3.0.10
 gunicorn==20.0.4
-idna
-ipython
-ipython-genutils
-itsdangerous==1.1.0
-jedi==0.18.0
-Jinja2
-lxml
-MarkupSafe==1.1.1
-mkl-fft==1.3.0
-mkl_random==1.0.1.1
-mkl-service==2.3.0
-numpy==1.19.5
-pandas
-parso
-pickleshare
+idna #@ file:///home/linux1/recipes/ci/idna_1610986105248/work
+ipython #@ file:///C:/ci/ipython_1617120911285/work
+ipython-genutils #@ file:///tmp/build/80754af9/ipython_genutils_1606773439826/work
+itsdangerous #@ file:///home/ktietz/src/ci/itsdangerous_1611932585308/work
+jedi #@ file:///C:/ci/jedi_1606932640618/work
+Jinja2 #@ file:///home/linux1/recipes/ci/jinja2_1610990516718/work
+lxml #@ file:///C:/ci/lxml_1616443418777/work
+MarkupSafe #@ file:///C:/ci/markupsafe_1607027406824/work
+numpy==1.20.2
+pandas==1.2.4
+parso==0.7.0
+pickleshare #@ file:///tmp/build/80754af9/pickleshare_1606932040724/work
 plotly==4.14.3
-prompt-toolkit==3.0.18
-pycparser
-Pygments
+prompt-toolkit #@ file:///tmp/build/80754af9/prompt-toolkit_1616415428029/work
+pycparser #@ file:///tmp/build/80754af9/pycparser_1594388511720/work
+Pygments #@ file:///tmp/build/80754af9/pygments_1615143339740/work
 pymongo==3.11.3
-pyOpenSSL==20.0.1
-PySocks==1.7.1
-python-dateutil
-pytz
-redis==3.5.3
-requests==2.25.1
+pyOpenSSL #@ file:///tmp/build/80754af9/pyopenssl_1608057966937/work
+PySocks #@ file:///C:/ci/pysocks_1605307512533/work
+python-dateutil==2.8.1
+pytz==2021.1
+requests #@ file:///tmp/build/80754af9/requests_1592841827918/work
 retrying==1.3.3
-six
-soupsieve
-traitlets==4.3.3
-urllib3==1.26.4
-wcwidth
-Werkzeug
-win-inet-pton==1.1.0
+six #@ file:///C:/ci/six_1605205404068/work
+soupsieve==2.0.1
+traitlets #@ file:///home/ktietz/src/ci/traitlets_1611929699868/work
+urllib3 #@ file:///tmp/build/80754af9/urllib3_1597086586889/work
+wcwidth #@ file:///tmp/build/80754af9/wcwidth_1593447189090/work
+Werkzeug #@ file:///home/ktietz/src/ci/werkzeug_1611932622770/work
+win-inet-pton #@ file:///C:/ci/win_inet_pton_1605306162074/work
 wincertstore==0.2
+
+requests~=2.24.0
+werkzeug~=1.0.1
+beautifulsoup4~=4.9.1
