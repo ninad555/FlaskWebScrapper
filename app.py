@@ -328,7 +328,8 @@ def index():
             db = dbConn['FlipkartScrapper'] # connecting to the database called crawlerDB
             logger.info("Database created")
             reviews_db = db[searchstring].find({}) # searching the collection with the name same as the keyword
-            if reviews_db.count() > required_reviews:
+            reviews_db = [i for i in reviews_db]
+            if len(reviews_db) > required_reviews:
                 reviews_db = [reviews_db[i] for i in range(0,required_reviews)]
                 saveDataFrameToFile(reviews_db,file_name="static/CSVs"+searchstring+".csv")
                 return render_template('results.html',reviews=reviews_db) # show the results to user
@@ -396,7 +397,7 @@ def index():
 
         except:
             threadClass(required_reviews=required_reviews, searchstring=searchstring,
-                        review=details)
+                        review=reviews)
             return render_template("error.html")
     else:
         return render_template("index.html")
