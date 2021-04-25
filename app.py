@@ -11,7 +11,7 @@ from time import time
 #from flask_cors import cross_origin
 
 #from IPython.core.display import clear_output
-
+import threading
 import pandas as pd
 import numpy as np
 import pymongo
@@ -167,15 +167,153 @@ def get_scatter_plot():
     return graphJSON
 
 
+def getrequiredreviews(reviews,prod_html,searchstring):
+
+    """To get the next link"""
+    try:
+        next_link = prod_html.find("div", {"class": "_3UAT2v _16PBlm"})
+        next_link = next_link.find_parent().attrs['href']
+        next_review_link = "https://www.flipkart.com" + next_link
+        logger.info("Next link hitted")
+        next_review_page = requests.get(next_review_link)
+        next_page_html = bs(next_review_page.text, 'html.parser')
+        mx = next_page_html.find_all('div', {'class': '_2MImiq _1Qnn1K'})[0].text
+        max_reviews_pages = mx[mx.find('of') + 2:]
+        max_reviews_pages = max_reviews_pages.replace(',', '')
+        max_reviews_pages = int(max_reviews_pages[:3])
+
+    except:
+        print("Error in response")
+    pages = [str(i) for i in range(1, max_reviews_pages)]
+    req = 0
+    details = []
+
+    """ Iterating throuhg requiured number of pages """
+    for page in pages:
+        if len(details) == required_reviews:
+            break
+            logger.info("Scrap completed")
+        else:
+            """To get the next link"""
+            try:
+                response = get(next_review_link + page)
+            except:
+                logger.info("NO next link found")
+
+            " Controlling the request "
+            try:
+                sleep(randint(8, 15))
+                req += 1
+                elapsed_time = time() - start_time
+                if req > (required_reviews / 10):
+                    logger.info("'Number of requests was greater than expected.'")
+                    logger.info('Number of requests was greater than expected.')
+                    clear_output(wait=False)
+
+                    break
+                temp_review_page_html = bs(response.text, 'html.parser')
+                bx = temp_review_page_html.find_all('div', {'class': '_1AtVbE col-12-12'})
+                del bx[0:1]
+                cmt = temp_review_page_html.find_all('div', {'class': "_27M-vq"})
+            except:
+                print("Error in box")
+
+            """ Srapping the data from pages one by one """
+            try:
+                product_name = prod_html.find_all('span', {'class': "B_NuCI"})[0].text
+                product_name = product_name[:product_name.find('(')]
+                # print(product_name)
+            except:
+                product_name = searchstring
+
+            review_count = 0
+            for b in cmt:
+                if review_count == required_reviews:
+                    break
+                else:
+                    try:
+                        name = b.div.div.find_all('p', {'class': '_2sc7ZR _2V5EHH'})[0].text
+                    except:
+                        name = 'No Name'
+                    try:
+                        rating = b.div.div.div.div.text
+                    except:
+                        rating = 'No Rating'
+                    try:
+                        commentHead = b.div.div.div.p.text
+                    except:
+                        commentHead = 'No Comment Heading'
+                    try:
+                        comtag = b.div.div.find_all('div', {'class': ''})
+                        custComment = comtag[0].div.text
+                    except:
+                        custComment = "No Customer Comment"
+                    try:
+                        verification = b.find_all("p", {"class": "_2mcZGG"})[0].text
+                    except:
+                        verification = "Not certified"
+                    try:
+                        review_period = b.find_all("p", {"class": "_2sc7ZR"})[1].text
+                    except:
+                        review_period = "Not mentioned"
+                    try:
+                        likes = b.find_all("span", {"class": "_3c3Px5"})[0].text
+                    except:
+                        likes = "0"
+                    try:
+                        dislikes = b.find_all("span", {"class": "_3c3Px5"})[1].text
+                    except:
+                        dislikes = "0"
+
+                    mydict = dict(Product=product_name, Name=name, Rating=rating, CommentHead=commentHead,
+                                  Comment=custComment, Customer=verification, Period=review_period, Likes=likes,
+                                  Dislikes=dislikes)
+
+                    details.append(mydict)
+                    review_count = review_count + 1
+
+    return details
+
+
 app = Flask(__name__)
+
+free_status = True
+
+#To avoid the time out issue on heroku
+class threadClass:
+
+    def __init__(self, required_reviews, searchstring,prod_html, review):
+        self.required_reviews = required_reviews
+        self.searchstring = searchstring
+        self.prod_html = prod_html
+        self.review = review
+        thread = threading.Thread(target=self.run, args=())
+        thread.daemon = True  # Daemonize thread
+        thread.start()  # Start the execution
+
+    def run(self):
+        global collection_name, free_status
+        free_status = False
+        collection_name = self.getrequiredreviews(required_reviews=self.required_reviews,
+                                                                   searchstring=self.searchstring,
+                                                                   review=self.review,
+                                                                 prod_html= self.prod_html)
+        logger.info("Thread run completed")
+        free_status = True
+
 
 
 
 @app.route("/", methods=["POST", "GET"])
 def index():
     if request.method == "POST":
-        global max_reviews_pages
+        global free_status
         global searchstring
+        ## To maintain the internal server issue on heroku
+        if free_status != True:
+            return "<h3>hThis website is executing some process. Kindly try after some time...</h3>"
+        else:
+            free_status = True
         searchstring = request.form['content'].replace("", "")
         required_reviews = int(request.form['expected_review'])
 
@@ -203,30 +341,18 @@ def index():
                 prod_html = bs(prodRes.text, "html.parser")
                 logger.info("Url hitted")
                 commentates = prod_html.find_all('div', {'class': "_16PBlm"})
-                next_link = prod_html.find("div", {"class": "_3UAT2v _16PBlm"})
+
                 reviews = get_reviews(prod_html,commentates,searchstring)
                 logger.info("Reviews Collected")
+
+                threadClass(required_reviews=required_reviews,searchstring=searchstring,prod_html=prod_html,
+                            review=reviews)
+
                 table = db[searchstring]  # creating a collection with the same name as search string. Tables and Collections are analogous.
                 filename = "static/CSVs"+searchstring+".csv" #  filename to save the details
                 logger.info(f"New file {filename} created")
                 start_time = time()
 
-                """To get the next link"""
-                try:
-                    next_link = prod_html.find("div", {"class": "_3UAT2v _16PBlm"})
-                    next_link = next_link.find_parent().attrs['href']
-                    next_review_link = "https://www.flipkart.com" + next_link
-                    logger.info("Next link hitted")
-                    next_review_page = requests.get(next_review_link)
-                    next_page_html = bs(next_review_page.text, 'html.parser')
-                    mx = next_page_html.find_all('div', {'class': '_2MImiq _1Qnn1K'})[0].text
-                    max_reviews_pages = mx[mx.find('of') + 2:]
-                    max_reviews_pages = max_reviews_pages.replace(',', '')
-                    max_reviews_pages = int(max_reviews_pages[:3])
-                    #print(max_reviews_pages)
-                except:
-                    print("Error in pages")
-                """ To get total available reviews """
                 try:
                     total_reviews = int(prod_html.find_all('div', {'class': "_3UAT2v _16PBlm"})[0].text.replace('All', '').replace('reviews',''))
 
@@ -244,107 +370,13 @@ def index():
                         return render_template("results.html", reviews = reviews)
 
                     else:
-                        pages = [str(i) for i in range(1, max_reviews_pages)]
-                        req = 0
-                        details = []
+                        details = getrequiredreviews(total_reviews=total_reviews, reviews=reviews, prod_html=prod_html, searchstring=searchstring)
 
-                        """ Iterating throuhg requiured number of pages """
-                        for page in pages:
-                            if len(details) == required_reviews:
-                                break
-                                logger.info("Scrap completed")
-                            else:
-                                try:
-                                    next_link = prod_html.find("div", {"class": "_3UAT2v _16PBlm"})
-                                    next_link = next_link.find_parent().attrs['href']
-                                    # next_link="#"
-                                    next_review_link = "https://www.flipkart.com" + next_link
-                                    next_review_page = requests.get(next_review_link,timeout =60 ,verify=False)
-                                    next_page_html = bs(next_review_page.text, 'html.parser')
+                        threadClass(required_reviews=required_reviews, searchstring=searchstring, prod_html=prod_html,
+                                    review=details)
 
-                                    response = get(next_review_link + page)
-                                except:
-                                    print("Error in response")
-
-                                " Controlling the request "
-                                try:
-                                    sleep(randint(8, 15))
-                                    req += 1
-                                    elapsed_time = time() - start_time
-                                    if req > (required_reviews / 10):
-                                        logger.info("'Number of requests was greater than expected.'")
-                                        logger.info('Number of requests was greater than expected.')
-                                        clear_output(wait=False)
-
-                                        break
-                                    temp_review_page_html = bs(response.text, 'html.parser')
-                                    bx = temp_review_page_html.find_all('div', {'class': '_1AtVbE col-12-12'})
-                                    del bx[0:1]
-                                    cmt = temp_review_page_html.find_all('div', {'class': "_27M-vq"})
-                                except:
-                                    print("Error in box")
-
-                                """ Srapping the data from pages one by one """
-                                try:
-                                    product_name = prod_html.find_all('span', {'class': "B_NuCI"})[0].text
-                                    product_name = product_name[:product_name.find('(')]
-                                    # print(product_name)
-                                except:
-                                    product_name = searchstring
-
-                                review_count = 0
-                                for b in cmt:
-                                    if review_count == required_reviews:
-                                        break
-                                    else:
-                                        try:
-                                            name = b.div.div.find_all('p', {'class': '_2sc7ZR _2V5EHH'})[0].text
-                                        except:
-                                            name = 'No Name'
-                                        try:
-                                            rating = b.div.div.div.div.text
-                                        except:
-                                            rating = 'No Rating'
-                                        try:
-                                            commentHead = b.div.div.div.p.text
-                                        except:
-                                            commentHead = 'No Comment Heading'
-                                        try:
-                                            comtag = b.div.div.find_all('div', {'class': ''})
-                                            custComment = comtag[0].div.text
-                                        except:
-                                            custComment = "No Customer Comment"
-                                        try:
-                                            verification = b.find_all("p", {"class": "_2mcZGG"})[0].text
-                                        except:
-                                            verification = "Not certified"
-                                        try:
-                                            review_period = b.find_all("p", {"class": "_2sc7ZR"})[1].text
-                                        except:
-                                            review_period = "Not mentioned"
-                                        try:
-                                            likes = b.find_all("span", {"class": "_3c3Px5"})[0].text
-                                        except:
-                                            likes = "0"
-                                        try:
-                                            dislikes = b.find_all("span", {"class": "_3c3Px5"})[1].text
-                                        except:
-                                            dislikes = "0"
-
-                                        mydict = dict(Product=product_name, Name=name, Rating=rating, CommentHead=commentHead,
-                                                      Comment=custComment, Customer=verification, Period=review_period, Likes=likes,
-                                                      Dislikes=dislikes)
-
-                                        details.append(mydict)
-                                        review_count = review_count + 1
-                                        print(len(details))
-
-                        threadClass(required_reviews=required_reviews, searchstring=searchstring,
-                                    review_count=review_count)
                     x1 = table.insert_many(details)
                     saveDataFrameToFile( dataframe=details, file_name=filename)
-
-
 
                 except Exception as e:
                     print(e)
@@ -352,8 +384,7 @@ def index():
 
                 logger.info("Data Saved")
                 saveDataFrameToFile(dataframe=details, file_name=filename)
-                threadClass(required_reviews=required_reviews, searchstring=searchstring,
-                            review_count=review_count)
+
                 return render_template("results.html", reviews=details)
 
 
