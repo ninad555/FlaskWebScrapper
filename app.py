@@ -327,10 +327,11 @@ def index():
             dbConn = pymongo.MongoClient("mongodb://localhost:27017/")  # opening a connection to Mongo
             db = dbConn['FlipkartScrapper'] # connecting to the database called crawlerDB
             logger.info("Database created")
-            reviews = db[searchstring].find({}) # searching the collection with the name same as the keyword
-            if reviews.count() > required_reviews:
-                reviews = [reviews[i] for i in range(0,required_reviews)]
-                return render_template('results.html',reviews=reviews) # show the results to user
+            reviews_db = db[searchstring].find({}) # searching the collection with the name same as the keyword
+            if reviews_db.count() > required_reviews:
+                reviews_db = [reviews_db[i] for i in range(0,required_reviews)]
+                saveDataFrameToFile(reviews_db,file_name="static/CSVs"+searchstring+".csv")
+                return render_template('results.html',reviews=reviews_db) # show the results to user
             else:
                 flipkart_url = "https://www.flipkart.com/search?q=" + searchstring
                 logger.info(f"Search begins for {searchstring}")
