@@ -26,6 +26,7 @@ def get_reviews(prod_html,commentates,searchstring):
     """
     This function scraps  the reviews of product
     """
+
     reviews = []
     try:
         product_name = prod_html.find_all('span', {'class': "B_NuCI"})[0].text
@@ -167,9 +168,11 @@ def get_scatter_plot():
     return graphJSON
 
 
-def getrequiredreviews(reviews,prod_html,searchstring):
+def getrequiredreviews(prod_html,searchstring,required_reviews):
 
     """To get the next link"""
+
+    global max_reviews_pages
     try:
         next_link = prod_html.find("div", {"class": "_3UAT2v _16PBlm"})
         next_link = next_link.find_parent().attrs['href']
@@ -187,6 +190,11 @@ def getrequiredreviews(reviews,prod_html,searchstring):
     pages = [str(i) for i in range(1, max_reviews_pages)]
     req = 0
     details = []
+    total_reviews = int(
+        prod_html.find_all('div', {'class': "_3UAT2v _16PBlm"})[0].text.replace('All', '').replace('reviews', ''))
+
+    """ Scrapping required numbers of reviews"""
+
 
     """ Iterating throuhg requiured number of pages """
     for page in pages:
@@ -209,8 +217,6 @@ def getrequiredreviews(reviews,prod_html,searchstring):
                     logger.info("'Number of requests was greater than expected.'")
                     logger.info('Number of requests was greater than expected.')
                     clear_output(wait=False)
-
-                    break
                 temp_review_page_html = bs(response.text, 'html.parser')
                 bx = temp_review_page_html.find_all('div', {'class': '_1AtVbE col-12-12'})
                 del bx[0:1]
@@ -278,15 +284,16 @@ def getrequiredreviews(reviews,prod_html,searchstring):
 app = Flask(__name__)
 
 free_status = True
+collection_name = None
 
 #To avoid the time out issue on heroku
 class threadClass:
 
-    def __init__(self, required_reviews, searchstring,prod_html, review):
+    def __init__(self, required_reviews, searchstring,link, review):
         self.required_reviews = required_reviews
         self.searchstring = searchstring
-        self.prod_html = prod_html
         self.review = review
+        self.link = link
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True  # Daemonize thread
         thread.start()  # Start the execution
@@ -294,14 +301,12 @@ class threadClass:
     def run(self):
         global collection_name, free_status
         free_status = False
-        collection_name = self.getrequiredreviews(required_reviews=self.required_reviews,
+        collection_name = getrequiredreviews(required_reviews=self.required_reviews,
                                                                    searchstring=self.searchstring,
-                                                                   review=self.review,
                                                                  prod_html= self.prod_html)
         logger.info("Thread run completed")
         free_status = True
-
-
+        return  collection_name
 
 
 @app.route("/", methods=["POST", "GET"])
@@ -342,12 +347,12 @@ def index():
                 logger.info("Url hitted")
                 commentates = prod_html.find_all('div', {'class': "_16PBlm"})
 
-                reviews = get_reviews(prod_html,commentates,searchstring)
-                logger.info("Reviews Collected")
+                reviews = get_reviews(commentates,prod_html,searchstring)
 
-                threadClass(required_reviews=required_reviews,searchstring=searchstring,prod_html=prod_html,
+                threadClass(required_reviews=required_reviews, searchstring=searchstring,
                             review=reviews)
 
+                logger.info("Reviews Collected")
                 table = db[searchstring]  # creating a collection with the same name as search string. Tables and Collections are analogous.
                 filename = "static/CSVs"+searchstring+".csv" #  filename to save the details
                 logger.info(f"New file {filename} created")
@@ -356,10 +361,9 @@ def index():
                 try:
                     total_reviews = int(prod_html.find_all('div', {'class': "_3UAT2v _16PBlm"})[0].text.replace('All', '').replace('reviews',''))
 
-                    """ Scrapping required numbers of reviews"""
-
                     if total_reviews < required_reviews:
                         return "<h4>Enter valid number of Reviews</h4>"
+
 
                     elif len(reviews) > required_reviews:
                         reviews = [reviews[j] for j in range(0, required_reviews)]
@@ -370,9 +374,9 @@ def index():
                         return render_template("results.html", reviews = reviews)
 
                     else:
-                        details = getrequiredreviews(total_reviews=total_reviews, reviews=reviews, prod_html=prod_html, searchstring=searchstring)
+                        details = getrequiredreviews(required_reviews=required_reviews, prod_html=prod_html, searchstring=searchstring)
 
-                        threadClass(required_reviews=required_reviews, searchstring=searchstring, prod_html=prod_html,
+                        threadClass(required_reviews=required_reviews, searchstring=searchstring,
                                     review=details)
 
                     x1 = table.insert_many(details)
@@ -381,7 +385,8 @@ def index():
                 except Exception as e:
                     print(e)
                     print("Error")
-
+                threadClass(required_reviews=required_reviews, searchstring=searchstring,
+                            review=details)
                 logger.info("Data Saved")
                 saveDataFrameToFile(dataframe=details, file_name=filename)
 
@@ -389,7 +394,9 @@ def index():
 
 
         except:
-                return render_template("error.html")
+            threadClass(required_reviews=required_reviews, searchstring=searchstring,
+                        review=details)
+            return render_template("error.html")
     else:
         return render_template("index.html")
 
