@@ -10,6 +10,8 @@ from random import randint
 from time import time
 #from flask_cors import cross_origin
 
+#from IPython.core.display import clear_output
+
 import pandas as pd
 import numpy as np
 import pymongo
@@ -257,7 +259,7 @@ def index():
                                     next_link = next_link.find_parent().attrs['href']
                                     # next_link="#"
                                     next_review_link = "https://www.flipkart.com" + next_link
-                                    next_review_page = requests.get(next_review_link)
+                                    next_review_page = requests.get(next_review_link,timeout =10 ,verify=False)
                                     next_page_html = bs(next_review_page.text, 'html.parser')
 
                                     response = get(next_review_link + page)
@@ -272,6 +274,7 @@ def index():
                                     if req > (required_reviews / 10):
                                         logger.info("'Number of requests was greater than expected.'")
                                         logger.info('Number of requests was greater than expected.')
+                                        clear_output(wait=False)
 
                                         break
                                     temp_review_page_html = bs(response.text, 'html.parser')

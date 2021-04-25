@@ -64,3 +64,16 @@
 2021-04-25 17:04:58,899:INFO:flipkart.py:Database created
 2021-04-25 17:05:19,580:INFO:flipkart.py:Bar graph created
 2021-04-25 17:05:20,035:INFO:flipkart.py:Scatter plot created
+2021-04-26 01:28:48,490:INFO:flipkart.py:Database created
+2021-04-26 01:29:38,063:INFO:flipkart.py:Database created
+2021-04-26 01:29:39,140:INFO:flipkart.py:Search begins for puma
+2021-04-26 01:29:44,593:INFO:flipkart.py:Url hitted
+2021-04-26 01:29:44,700:INFO:flipkart.py:Reviews Collected
+2021-04-26 01:29:44,700:INFO:flipkart.py:New file static/CSVspuma.csv created
+2021-04-26 01:29:44,753:INFO:flipkart.py:Data Saved
+2021-04-26 01:30:51,844:INFO:flipkart.py:Database created
+2021-04-26 01:30:52,151:INFO:flipkart.py:Search begins for puma
+2021-04-26 01:30:54,814:INFO:flipkart.py:Url hitted
+2021-04-26 01:30:54,889:INFO:flipkart.py:Reviews Collected
+2021-04-26 01:30:54,889:INFO:flipkart.py:New file static/CSVspuma.csv created
+2021-04-26 01:30:54,929:INFO:flipkart.py:Data Saved
