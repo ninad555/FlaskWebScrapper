@@ -280,7 +280,6 @@ def getrequiredreviews(prod_html,searchstring,required_reviews):
 
     return details
 
-
 app = Flask(__name__)
 
 free_status = True
@@ -395,7 +394,7 @@ def index():
 
 
         except:
-            
+
             return render_template("error.html")
     else:
         return render_template("index.html")
