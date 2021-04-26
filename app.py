@@ -301,11 +301,12 @@ class threadClass:
     def run(self):
         global collection_name, free_status
         free_status = False
-
-        collection_name = getrequiredreviews(prod_html=self.prod_html, required_reviews=self.required_reviews,
+        return getrequiredreviews(prod_html=self.prod_html, required_reviews=self.required_reviews,
                                              searchstring=self.searchstring)
         logger.info("Thread run completed")
         free_status = True
+
+
 
 
 @app.route("/", methods=["POST", "GET"])
