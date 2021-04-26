@@ -1,9 +1,8 @@
-
 from urllib.request import urlopen as uReq
 import requests
 from logger_class import getLog
 from bs4 import BeautifulSoup as bs
-from flask import Flask,render_template,request
+from flask import Flask, render_template, request
 from requests import get
 from random import randint
 from time import time
@@ -14,11 +13,12 @@ import pymongo
 import plotly as py
 import plotly.graph_objects as go
 import json
-import pandas as pd    
+import pandas as pd
 
 logger = getLog("flipkart.py")
 
-def get_reviews(prod_html,commentates,searchstring):
+
+def get_reviews(prod_html, commentates, searchstring):
     """
     This function scraps  the reviews of product
     """
@@ -54,7 +54,7 @@ def get_reviews(prod_html,commentates,searchstring):
         except:
             verification = "Not certified"
         try:
-            review_period = comment.find_all("p",{"class":"_2sc7ZR"})[1].text
+            review_period = comment.find_all("p", {"class": "_2sc7ZR"})[1].text
         except:
             review_period = "Not mentioned"
         try:
@@ -62,7 +62,7 @@ def get_reviews(prod_html,commentates,searchstring):
         except:
             likes = "0"
         try:
-            dislikes = comment.find_all("span",{"class":"_3c3Px5"})[1].text
+            dislikes = comment.find_all("span", {"class": "_3c3Px5"})[1].text
         except:
             dislikes = "0"
             # fw.write(searchString + "," + name.replace(",", ":") + "," + rating + "," + commentHead.replace(",",":") + "," + custComment.replace( ",", ":") + "\n")
@@ -71,13 +71,12 @@ def get_reviews(prod_html,commentates,searchstring):
                       Dislikes=dislikes)
 
         reviews.append(mydict)
-        #reviews = pd.DataFrame(reviews)
+        # reviews = pd.DataFrame(reviews)
 
     return reviews
 
 
 def saveDataFrameToFile(dataframe, file_name):
-
     """
         This function saves dataframe into filename given
     """
@@ -85,9 +84,10 @@ def saveDataFrameToFile(dataframe, file_name):
         data = pd.DataFrame(dataframe)
         data.to_csv(file_name)
     except Exception as e:
-               print(e)
+        print(e)
 
-def product_details(product_page,productLink,searchstring):
+
+def product_details(product_page, productLink, searchstring):
     """
      This function collects the details of products
     """
@@ -131,10 +131,12 @@ def product_details(product_page,productLink,searchstring):
     except:
         payment_methods = "Not available"
 
-    dct = {"Product Image Url": product_image_url, "Product Link":productLink, "Product Name": product_name, "Price": product_price,
+    dct = {"Product Image Url": product_image_url, "Product Link": productLink, "Product Name": product_name,
+           "Price": product_price,
            "MRP": actual_price, "Discount": discount, "Offers": offers, "Payment Methods": payment_methods}
     product_detail.append(dct)
     return product_detail
+
 
 def get_pie_chart():
     """
@@ -149,6 +151,7 @@ def get_pie_chart():
     graphJSON = json.dumps(data, cls=py.utils.PlotlyJSONEncoder)
     return graphJSON
 
+
 def get_scatter_plot():
     """
     This function returns scatter plot for likes and dislikes
@@ -156,16 +159,15 @@ def get_scatter_plot():
     filename = "static/CSVs" + searchstring + ".csv"
     review_data = pd.read_csv(filename)
     data = go.Figure(data=[go.Scatter(x=review_data["Likes"], y=review_data["Dislikes"],
-                                       mode="markers",
-                                       marker_color='rgba(199, 10, 165, .9)',
-                                       marker_size=10)])
+                                      mode="markers",
+                                      marker_color='rgba(199, 10, 165, .9)',
+                                      marker_size=10)])
 
     graphJSON = json.dumps(data, cls=py.utils.PlotlyJSONEncoder)
     return graphJSON
 
 
-def getrequiredreviews(prod_html,searchstring,required_reviews):
-
+def getrequiredreviews(prod_html, searchstring, required_reviews):
     """To get the next link"""
 
     global max_reviews_pages
@@ -190,7 +192,6 @@ def getrequiredreviews(prod_html,searchstring,required_reviews):
         prod_html.find_all('div', {'class': "_3UAT2v _16PBlm"})[0].text.replace('All', '').replace('reviews', ''))
 
     """ Scrapping required numbers of reviews"""
-
 
     """ Iterating throuhg requiured number of pages """
     for page in pages:
@@ -276,15 +277,17 @@ def getrequiredreviews(prod_html,searchstring,required_reviews):
 
     return details
 
+
 app = Flask(__name__)
 
 free_status = True
 collection_name = None
 
-#To avoid the time out issue on heroku
+
+# To avoid the time out issue on heroku
 class threadClass:
 
-    def __init__(self,prod_html, required_reviews, searchstring):
+    def __init__(self, prod_html, required_reviews, searchstring):
         self.required_reviews = required_reviews
         self.searchstring = searchstring
         self.prod_html = prod_html
@@ -296,8 +299,8 @@ class threadClass:
         global collection_name, free_status
         free_status = False
 
-        collection_name = getrequiredreviews(prod_html=self.prod_html,required_reviews=self.required_reviews,
-                                                                   searchstring=self.searchstring)
+        collection_name = getrequiredreviews(prod_html=self.prod_html, required_reviews=self.required_reviews,
+                                             searchstring=self.searchstring)
         logger.info("Thread run completed")
         free_status = True
 
@@ -307,7 +310,7 @@ def index():
     if request.method == "POST":
         global free_status
         global searchstring
-        ## To maintain the internal server issue on heroku
+        # To maintain the internal server issue on heroku
         if free_status != True:
             return "<h3>hThis website is executing some process. Kindly try after some time...</h3>"
         else:
@@ -315,7 +318,6 @@ def index():
         searchstring = request.form['content'].replace("", "")
         required_reviews = int(request.form['expected_review'])
         flipkart_url = "https://www.flipkart.com/search?q=" + searchstring
-        threadClass(required_reviews=required_reviews, searchstring=searchstring)
         logger.info(f"Search begins for {searchstring}")
         uClient = uReq(flipkart_url)
         flipkartpage = uClient.read()
@@ -329,32 +331,37 @@ def index():
         prod_html = bs(prodRes.text, "html.parser")
         logger.info("Url hitted")
 
+        threadClass(prod_html=prod_html, required_reviews=required_reviews, searchstring=searchstring)
+
         """ connecting with database"""
         try:
             dbConn = pymongo.MongoClient("mongodb://localhost:27017/")  # opening a connection to Mongo
-            db = dbConn['FlipkartScrapper'] # connecting to the database called crawlerDB
+            db = dbConn['FlipkartScrapper']  # connecting to the database called crawlerDB
             logger.info("Database created")
-            reviews_db = db[searchstring].find({}) # searching the collection with the name same as the keyword
+            reviews_db = db[searchstring].find({})  # searching the collection with the name same as the keyword
             reviews_db = [i for i in reviews_db]
             if len(reviews_db) > required_reviews:
-                reviews_db = [reviews_db[i] for i in range(0,required_reviews)]
-                saveDataFrameToFile(reviews_db,file_name="static/CSVs"+searchstring+".csv")
-                return render_template('results.html',reviews=reviews_db) # show the results to user
+                reviews_db = [reviews_db[i] for i in range(0, required_reviews)]
+                saveDataFrameToFile(reviews_db, file_name="static/CSVs" + searchstring + ".csv")
+                return render_template('results.html', reviews=reviews_db)  # show the results to user
             else:
                 commentates = prod_html.find_all('div', {'class': "_16PBlm"})
 
-                reviews = get_reviews(commentates,prod_html,searchstring)
+                reviews = get_reviews(commentates, prod_html, searchstring)
 
-                threadClass(prod_html=prod_html,required_reviews=required_reviews, searchstring=searchstring)
+                threadClass(prod_html=prod_html, required_reviews=required_reviews, searchstring=searchstring)
 
                 logger.info("Reviews Collected")
-                table = db[searchstring]  # creating a collection with the same name as search string. Tables and Collections are analogous.
-                filename = "static/CSVs"+searchstring+".csv" #  filename to save the details
+                table = db[
+                    searchstring]  # creating a collection with the same name as search string. Tables and Collections are analogous.
+                filename = "static/CSVs" + searchstring + ".csv"  # filename to save the details
                 logger.info(f"New file {filename} created")
                 start_time = time()
 
                 try:
-                    total_reviews = int(prod_html.find_all('div', {'class': "_3UAT2v _16PBlm"})[0].text.replace('All', '').replace('reviews',''))
+                    total_reviews = int(
+                        prod_html.find_all('div', {'class': "_3UAT2v _16PBlm"})[0].text.replace('All', '').replace(
+                            'reviews', ''))
 
                     if total_reviews < required_reviews:
                         return "<h4>Enter valid number of Reviews</h4>"
@@ -364,22 +371,23 @@ def index():
                         reviews = [reviews[j] for j in range(0, required_reviews)]
                         x = table.insert_many(reviews)
                         logger.info(f"Required reviews {required_reviews} scrapped")
-                        saveDataFrameToFile(dataframe=reviews,file_name=filename)
+                        saveDataFrameToFile(dataframe=reviews, file_name=filename)
                         logger.info("Data saved")
-                        return render_template("results.html", reviews = reviews)
+                        return render_template("results.html", reviews=reviews)
 
                     else:
-                        details = getrequiredreviews(required_reviews=required_reviews, prod_html=prod_html, searchstring=searchstring)
+                        details = getrequiredreviews(required_reviews=required_reviews, prod_html=prod_html,
+                                                     searchstring=searchstring)
 
-                        threadClass(required_reviews=required_reviews,prod_html=prod_html, searchstring=searchstring)
+                        threadClass(required_reviews=required_reviews, prod_html=prod_html, searchstring=searchstring)
 
                     x1 = table.insert_many(details)
-                    saveDataFrameToFile( dataframe=details, file_name=filename)
+                    saveDataFrameToFile(dataframe=details, file_name=filename)
 
                 except Exception as e:
                     print(e)
                     print("Error")
-                threadClass(required_reviews=required_reviews,searchstring=searchstring)
+                threadClass(required_reviews=required_reviews, searchstring=searchstring)
                 logger.info("Data Saved")
                 saveDataFrameToFile(dataframe=details, file_name=filename)
 
@@ -387,10 +395,11 @@ def index():
 
 
         except:
-            threadClass(required_reviews=required_reviews,prod_html=prod_html, searchstring=searchstring)
+            threadClass(required_reviews=required_reviews, prod_html=prod_html, searchstring=searchstring)
             return render_template("error.html")
     else:
         return render_template("index.html")
+
 
 @app.route("/detail", methods=["POST", "GET"])
 def detail():
@@ -408,25 +417,27 @@ def detail():
         productLink = "https://www.flipkart.com" + box.div.div.div.a['href']
         prodRes = requests.get(productLink)
         prod_html = bs(prodRes.text, "html.parser")
-        product_deatil = product_details(prod_html,productLink,searchstring)
+        product_deatil = product_details(prod_html, productLink, searchstring)
         products.extend(product_deatil)
 
         return render_template("details.html", prod_details=products)
 
     except Exception as e:
-          print(e)
+        print(e)
 
-@app.route("/Dashboard" , methods = ["GET" , "POST"])
+
+@app.route("/Dashboard", methods=["GET", "POST"])
 def Dashboard():
     try:
         bar = get_pie_chart()
         logger.info("Bar graph created")
         Scatter = get_scatter_plot()
         logger.info("Scatter plot created")
-        return render_template( "Dashboard.html", plot = bar, Scatter = Scatter )
+        return render_template("Dashboard.html", plot=bar, Scatter=Scatter)
 
     except Exception as e:
-                 print(e)
+        print(e)
+
 
 if __name__ == "__main__":
     app.run()
