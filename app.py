@@ -6,6 +6,8 @@ from flask import Flask, render_template, request
 from requests import get
 from random import randint
 from time import time
+from time import sleep
+
 
 import threading
 
@@ -188,6 +190,7 @@ def getrequiredreviews(prod_html, searchstring, required_reviews):
     pages = [str(i) for i in range(1, max_reviews_pages)]
     req = 0
     details = []
+    start_time = time()
     total_reviews = int(
         prod_html.find_all('div', {'class': "_3UAT2v _16PBlm"})[0].text.replace('All', '').replace('reviews', ''))
 
@@ -207,9 +210,9 @@ def getrequiredreviews(prod_html, searchstring, required_reviews):
 
             " Controlling the request "
             try:
-                #sleep(randint(8, 15))
+                sleep(randint(8, 15))
                 req += 1
-                #elapsed_time = time() - start_time
+                elapsed_time = time() - start_time
                 if req > (required_reviews / 10):
                     logger.info("'Number of requests was greater than expected.'")
                     logger.info('Number of requests was greater than expected.')
