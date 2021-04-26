@@ -284,9 +284,10 @@ collection_name = None
 #To avoid the time out issue on heroku
 class threadClass:
 
-    def __init__(self, required_reviews, searchstring):
+    def __init__(self,prod_html, required_reviews, searchstring):
         self.required_reviews = required_reviews
         self.searchstring = searchstring
+        self.prod_html = prod_html
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True  # Daemonize thread
         thread.start()  # Start the execution
@@ -295,7 +296,7 @@ class threadClass:
         global collection_name, free_status
         free_status = False
 
-        collection_name = getrequiredreviews(required_reviews=self.required_reviews,
+        collection_name = getrequiredreviews(prod_html=self.prod_html,required_reviews=self.required_reviews,
                                                                    searchstring=self.searchstring)
         logger.info("Thread run completed")
         free_status = True
@@ -344,7 +345,7 @@ def index():
 
                 reviews = get_reviews(commentates,prod_html,searchstring)
 
-                threadClass(required_reviews=required_reviews, searchstring=searchstring)
+                threadClass(prod_html=prod_html,required_reviews=required_reviews, searchstring=searchstring)
 
                 logger.info("Reviews Collected")
                 table = db[searchstring]  # creating a collection with the same name as search string. Tables and Collections are analogous.
@@ -386,7 +387,7 @@ def index():
 
 
         except:
-            threadClass(required_reviews=required_reviews, searchstring=searchstring)
+            threadClass(required_reviews=required_reviews,prod_html=prod_html, searchstring=searchstring)
             return render_template("error.html")
     else:
         return render_template("index.html")
