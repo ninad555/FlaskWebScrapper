@@ -3,6 +3,7 @@ import requests
 from logger_class import getLog
 from bs4 import BeautifulSoup as bs
 from flask import Flask, render_template, request
+from flask_cors import CORS, cross_origin
 from requests import get
 from random import randint
 from time import time
@@ -301,7 +302,7 @@ class threadClass:
     def run(self):
         global collection_name, free_status
         free_status = False
-        return getrequiredreviews(prod_html=self.prod_html, required_reviews=self.required_reviews,
+        collection_name = getrequiredreviews(prod_html=self.prod_html, required_reviews=self.required_reviews,
                                              searchstring=self.searchstring)
         logger.info("Thread run completed")
         free_status = True
@@ -310,6 +311,7 @@ class threadClass:
 
 
 @app.route("/", methods=["POST", "GET"])
+@cross_origin()
 def index():
     if request.method == "POST":
         global free_status
@@ -391,7 +393,7 @@ def index():
                 except Exception as e:
                     print(e)
                     print("Error")
-                threadClass(required_reviews=required_reviews, searchstring=searchstring)
+
                 logger.info("Data Saved")
                 saveDataFrameToFile(dataframe=details, file_name=filename)
 
@@ -406,6 +408,7 @@ def index():
 
 
 @app.route("/detail", methods=["POST", "GET"])
+@cross_origin()
 def detail():
     try:
         products = []
@@ -431,6 +434,7 @@ def detail():
 
 
 @app.route("/Dashboard", methods=["GET", "POST"])
+@cross_origin()
 def Dashboard():
     try:
         bar = get_pie_chart()
