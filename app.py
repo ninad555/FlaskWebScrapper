@@ -207,13 +207,13 @@ def getrequiredreviews(prod_html, searchstring, required_reviews):
 
             " Controlling the request "
             try:
-                sleep(randint(8, 15))
+                #sleep(randint(8, 15))
                 req += 1
-                elapsed_time = time() - start_time
+                #elapsed_time = time() - start_time
                 if req > (required_reviews / 10):
                     logger.info("'Number of requests was greater than expected.'")
                     logger.info('Number of requests was greater than expected.')
-                    clear_output(wait=False)
+
                 temp_review_page_html = bs(response.text, 'html.parser')
                 bx = temp_review_page_html.find_all('div', {'class': '_1AtVbE col-12-12'})
                 del bx[0:1]
