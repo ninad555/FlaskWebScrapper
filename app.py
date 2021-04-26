@@ -5,7 +5,6 @@ from logger_class import getLog
 from bs4 import BeautifulSoup as bs
 from flask import Flask,render_template,request
 from requests import get
-from time import sleep
 from random import randint
 from time import time
 #from flask_cors import cross_origin
@@ -302,7 +301,8 @@ class threadClass:
         free_status = False
         collection_name = getrequiredreviews(required_reviews=self.required_reviews,
                                                                    searchstring=self.searchstring,
-                                                                 prod_html= self.prod_html)
+                                                                 prod_html= self.link
+                                                                      )
         logger.info("Thread run completed")
         free_status = True
         return  collection_name
@@ -334,6 +334,7 @@ def index():
                 return render_template('results.html',reviews=reviews_db) # show the results to user
             else:
                 flipkart_url = "https://www.flipkart.com/search?q=" + searchstring
+                threadClass(required_reviews=required_reviews, searchstring=searchstring,link=flipkart_url, review=reviews_db)
                 logger.info(f"Search begins for {searchstring}")
                 uClient = uReq(flipkart_url)
                 flipkartpage = uClient.read()
