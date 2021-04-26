@@ -1,4 +1,4 @@
-from werkzeug.utils import cached_property
+
 from urllib.request import urlopen as uReq
 import requests
 from logger_class import getLog
@@ -7,17 +7,14 @@ from flask import Flask,render_template,request
 from requests import get
 from random import randint
 from time import time
-#from flask_cors import cross_origin
 
-#from IPython.core.display import clear_output
 import threading
-import pandas as pd
-import numpy as np
+
 import pymongo
 import plotly as py
 import plotly.graph_objects as go
 import json
-
+import pandas as pd    
 
 logger = getLog("flipkart.py")
 
@@ -287,11 +284,9 @@ collection_name = None
 #To avoid the time out issue on heroku
 class threadClass:
 
-    def __init__(self, required_reviews, searchstring,link, review):
+    def __init__(self, required_reviews, searchstring):
         self.required_reviews = required_reviews
         self.searchstring = searchstring
-        self.review = review
-        self.link = link
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True  # Daemonize thread
         thread.start()  # Start the execution
@@ -299,13 +294,11 @@ class threadClass:
     def run(self):
         global collection_name, free_status
         free_status = False
+
         collection_name = getrequiredreviews(required_reviews=self.required_reviews,
-                                                                   searchstring=self.searchstring,
-                                                                 prod_html= self.link
-                                                                      )
+                                                                   searchstring=self.searchstring)
         logger.info("Thread run completed")
         free_status = True
-        return  collection_name
 
 
 @app.route("/", methods=["POST", "GET"])
@@ -334,7 +327,7 @@ def index():
                 return render_template('results.html',reviews=reviews_db) # show the results to user
             else:
                 flipkart_url = "https://www.flipkart.com/search?q=" + searchstring
-                threadClass(required_reviews=required_reviews, searchstring=searchstring,link=flipkart_url, review=reviews_db)
+                threadClass(required_reviews=required_reviews, searchstring=searchstring)
                 logger.info(f"Search begins for {searchstring}")
                 uClient = uReq(flipkart_url)
                 flipkartpage = uClient.read()
@@ -351,8 +344,7 @@ def index():
 
                 reviews = get_reviews(commentates,prod_html,searchstring)
 
-                threadClass(required_reviews=required_reviews, searchstring=searchstring,
-                            review=reviews)
+                threadClass(required_reviews=required_reviews, searchstring=searchstring)
 
                 logger.info("Reviews Collected")
                 table = db[searchstring]  # creating a collection with the same name as search string. Tables and Collections are analogous.
@@ -378,8 +370,7 @@ def index():
                     else:
                         details = getrequiredreviews(required_reviews=required_reviews, prod_html=prod_html, searchstring=searchstring)
 
-                        threadClass(required_reviews=required_reviews, searchstring=searchstring,
-                                    review=details)
+                        threadClass(required_reviews=required_reviews, searchstring=searchstring)
 
                     x1 = table.insert_many(details)
                     saveDataFrameToFile( dataframe=details, file_name=filename)
@@ -387,7 +378,7 @@ def index():
                 except Exception as e:
                     print(e)
                     print("Error")
-                threadClass(required_reviews=required_reviews,link=flipkart_url ,searchstring=searchstring)
+                threadClass(required_reviews=required_reviews,searchstring=searchstring)
                 logger.info("Data Saved")
                 saveDataFrameToFile(dataframe=details, file_name=filename)
 
@@ -395,7 +386,7 @@ def index():
 
 
         except:
-
+            threadClass(required_reviews=required_reviews, searchstring=searchstring)
             return render_template("error.html")
     else:
         return render_template("index.html")
