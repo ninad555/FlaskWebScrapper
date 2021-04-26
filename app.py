@@ -314,6 +314,20 @@ def index():
             free_status = True
         searchstring = request.form['content'].replace("", "")
         required_reviews = int(request.form['expected_review'])
+        flipkart_url = "https://www.flipkart.com/search?q=" + searchstring
+        threadClass(required_reviews=required_reviews, searchstring=searchstring)
+        logger.info(f"Search begins for {searchstring}")
+        uClient = uReq(flipkart_url)
+        flipkartpage = uClient.read()
+        uClient.close()
+        flipkart_html = bs(flipkartpage, "html.parser")
+        boxes = flipkart_html.findAll("div", {"class": "_1AtVbE col-12-12"})
+        del boxes[0:3]
+        box = boxes[4]
+        productLink = "https://www.flipkart.com" + box.div.div.div.a['href']
+        prodRes = requests.get(productLink)
+        prod_html = bs(prodRes.text, "html.parser")
+        logger.info("Url hitted")
 
         """ connecting with database"""
         try:
@@ -327,20 +341,6 @@ def index():
                 saveDataFrameToFile(reviews_db,file_name="static/CSVs"+searchstring+".csv")
                 return render_template('results.html',reviews=reviews_db) # show the results to user
             else:
-                flipkart_url = "https://www.flipkart.com/search?q=" + searchstring
-                threadClass(required_reviews=required_reviews, searchstring=searchstring)
-                logger.info(f"Search begins for {searchstring}")
-                uClient = uReq(flipkart_url)
-                flipkartpage = uClient.read()
-                uClient.close()
-                flipkart_html = bs(flipkartpage, "html.parser")
-                boxes = flipkart_html.findAll("div", {"class": "_1AtVbE col-12-12"})
-                del boxes[0:3]
-                box = boxes[4]
-                productLink = "https://www.flipkart.com" + box.div.div.div.a['href']
-                prodRes = requests.get(productLink)
-                prod_html = bs(prodRes.text, "html.parser")
-                logger.info("Url hitted")
                 commentates = prod_html.find_all('div', {'class': "_16PBlm"})
 
                 reviews = get_reviews(commentates,prod_html,searchstring)
@@ -371,7 +371,7 @@ def index():
                     else:
                         details = getrequiredreviews(required_reviews=required_reviews, prod_html=prod_html, searchstring=searchstring)
 
-                        threadClass(required_reviews=required_reviews, searchstring=searchstring)
+                        threadClass(required_reviews=required_reviews,prod_html=prod_html, searchstring=searchstring)
 
                     x1 = table.insert_many(details)
                     saveDataFrameToFile( dataframe=details, file_name=filename)
