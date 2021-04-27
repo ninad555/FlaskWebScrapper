@@ -325,8 +325,7 @@ def index():
 
 
         except:
-            return render_template("results.html", reviews=reviews)
-            return render_template("error.html")
+            return render_template("results.html")
     else:
         return render_template("index.html")
 
