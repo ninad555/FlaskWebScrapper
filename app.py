@@ -328,7 +328,7 @@ def index():
                 commentates = prod_html.find_all('div', {'class': "_16PBlm"})
 
                 reviews = get_reviews(commentates, prod_html, searchstring)
-                threads1 = min(10,len(reviews))
+                threads = min(10,len(reviews))
                 print("thread Created")
                 with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
                     executor.map(get_reviews,commentates, prod_html, searchstring)
