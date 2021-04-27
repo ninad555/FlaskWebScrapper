@@ -4,12 +4,12 @@ from logger_class import getLog
 from bs4 import BeautifulSoup as bs
 from flask import Flask, render_template, request
 from flask_cors import CORS, cross_origin
+
 from requests import get
 from random import randint
 from time import time
 from time import sleep
-
-
+import concurrent.futures
 import threading
 
 import pymongo
@@ -287,29 +287,6 @@ app = Flask(__name__)
 free_status = True
 collection_name = None
 
-
-# To avoid the time out issue on heroku
-class threadClass:
-
-    def __init__(self, prod_html, required_reviews, searchstring):
-        self.required_reviews = required_reviews
-        self.searchstring = searchstring
-        self.prod_html = prod_html
-        thread = threading.Thread(target=self.run, args=())
-        thread.daemon = True  # Daemonize thread
-        thread.start()  # Start the execution
-
-    def run(self):
-        global collection_name, free_status
-        free_status = False
-        collection_name = getrequiredreviews(prod_html=self.prod_html, required_reviews=self.required_reviews,
-                                             searchstring=self.searchstring)
-        logger.info("Thread run completed")
-        free_status = True
-
-
-
-
 @app.route("/", methods=["POST", "GET"])
 @cross_origin()
 def index():
@@ -337,12 +314,11 @@ def index():
         prod_html = bs(prodRes.text, "html.parser")
         logger.info("Url hitted")
 
-        threadClass(prod_html=prod_html, required_reviews=required_reviews, searchstring=searchstring)
 
         """ connecting with database"""
         try:
             dbConn = pymongo.MongoClient("mongodb://localhost:27017/")  # opening a connection to Mongo
-            db = dbConn['FlipkartScrapper']  # connecting to the database called crawlerDB
+            db = dbConn['new_scrapper']  # connecting to the database called crawlerDB
             logger.info("Database created")
             reviews_db = db[searchstring].find({})  # searching the collection with the name same as the keyword
             reviews_db = [i for i in reviews_db]
@@ -354,8 +330,10 @@ def index():
                 commentates = prod_html.find_all('div', {'class': "_16PBlm"})
 
                 reviews = get_reviews(commentates, prod_html, searchstring)
-
-                threadClass(prod_html=prod_html, required_reviews=required_reviews, searchstring=searchstring)
+                threads1 = min(10,len(reviews))
+                print("thread Created")
+                with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+                    executor.map(get_reviews,commentates, prod_html, searchstring)
 
                 logger.info("Reviews Collected")
                 table = db[
@@ -377,6 +355,10 @@ def index():
                         reviews = [reviews[j] for j in range(0, required_reviews)]
                         x = table.insert_many(reviews)
                         logger.info(f"Required reviews {required_reviews} scrapped")
+                        threads2 = min(10, len(reviews))
+                        print("thread Created")
+                        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+                            executor.map(get_reviews, commentates, prod_html, searchstring)
                         saveDataFrameToFile(dataframe=reviews, file_name=filename)
                         logger.info("Data saved")
                         return render_template("results.html", reviews=reviews)
@@ -385,8 +367,10 @@ def index():
                         details = getrequiredreviews(required_reviews=required_reviews, prod_html=prod_html,
                                                      searchstring=searchstring)
 
-                        threadClass(required_reviews=required_reviews, prod_html=prod_html, searchstring=searchstring)
-
+                        threads3 = min(10, len(details))
+                        print("thread Created")
+                        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+                            executor.map(getrequiredreviews, required_reviews, prod_html, searchstring)
                     x1 = table.insert_many(details)
                     saveDataFrameToFile(dataframe=details, file_name=filename)
 
@@ -401,7 +385,6 @@ def index():
 
 
         except:
-            threadClass(required_reviews=required_reviews, prod_html=prod_html, searchstring=searchstring)
             return render_template("error.html")
     else:
         return render_template("index.html")

@@ -143,3 +143,40 @@
 2021-04-27 03:10:27,065:INFO:flipkart.py:Thread run completed
 2021-04-27 03:10:30,252:INFO:flipkart.py:Bar graph created
 2021-04-27 03:10:30,640:INFO:flipkart.py:Scatter plot created
+2021-04-27 14:58:03,288:INFO:flipkart.py:Search begins for samsung
+2021-04-27 14:58:08,634:INFO:flipkart.py:Url hitted
+2021-04-27 14:58:09,419:INFO:flipkart.py:Database created
+2021-04-27 14:58:32,761:INFO:flipkart.py:Bar graph created
+2021-04-27 14:58:34,270:INFO:flipkart.py:Scatter plot created
+2021-04-27 14:58:52,013:INFO:flipkart.py:Bar graph created
+2021-04-27 14:58:52,072:INFO:flipkart.py:Scatter plot created
+2021-04-27 15:02:11,671:INFO:flipkart.py:Search begins for vivo
+2021-04-27 15:02:35,182:INFO:flipkart.py:Search begins for vivo
+2021-04-27 15:02:41,976:INFO:flipkart.py:Url hitted
+2021-04-27 15:02:41,987:INFO:flipkart.py:Database created
+2021-04-27 15:02:43,639:INFO:flipkart.py:Reviews Collected
+2021-04-27 15:02:43,639:INFO:flipkart.py:New file static/CSVsvivo.csv created
+2021-04-27 15:02:43,919:INFO:flipkart.py:Next link hitted
+2021-04-27 15:02:48,936:INFO:flipkart.py:Search begins for vivo
+2021-04-27 15:03:00,585:INFO:flipkart.py:Url hitted
+2021-04-27 15:03:00,920:INFO:flipkart.py:Database created
+2021-04-27 15:03:01,132:INFO:flipkart.py:Data Saved
+2021-04-27 15:03:03,455:INFO:flipkart.py:Reviews Collected
+2021-04-27 15:03:03,474:INFO:flipkart.py:New file static/CSVsvivo.csv created
+2021-04-27 15:03:03,825:INFO:flipkart.py:Next link hitted
+2021-04-27 15:03:05,647:INFO:flipkart.py:Url hitted
+2021-04-27 15:03:05,657:INFO:flipkart.py:Database created
+2021-04-27 15:03:09,240:INFO:flipkart.py:Reviews Collected
+2021-04-27 15:03:09,240:INFO:flipkart.py:New file static/CSVsvivo.csv created
+2021-04-27 15:03:09,691:INFO:flipkart.py:Next link hitted
+2021-04-27 15:03:21,865:INFO:flipkart.py:Data Saved
+2021-04-27 15:03:23,909:INFO:flipkart.py:Data Saved
+2021-04-27 15:06:40,828:INFO:flipkart.py:Search begins for samsung
+2021-04-27 15:07:02,299:INFO:flipkart.py:Url hitted
+2021-04-27 15:07:02,310:INFO:flipkart.py:Database created
+2021-04-27 15:07:03,641:INFO:flipkart.py:Reviews Collected
+2021-04-27 15:07:03,642:INFO:flipkart.py:New file static/CSVssamsung.csv created
+2021-04-27 15:07:03,887:INFO:flipkart.py:Next link hitted
+2021-04-27 15:07:19,909:INFO:flipkart.py:Data Saved
+2021-04-27 15:07:50,874:INFO:flipkart.py:Bar graph created
+2021-04-27 15:07:51,023:INFO:flipkart.py:Scatter plot created
