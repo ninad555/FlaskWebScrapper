@@ -280,7 +280,7 @@ def index():
             db = dbConn['new_scrapper']  # connecting to the database called crawlerDB
             logger.info("Database created")
             reviews = db[searchstring].find({})  # searching the collection with the name same as the keyword
-            if len(reviews)> required_reviews:
+            if len(reviews) > required_reviews:
                 reviews = [reviews[i] for i in range(0, required_reviews)]
                 return render_template('results.html', reviews=reviews)  # show the results to user
             else:
@@ -294,11 +294,6 @@ def index():
                 filename = "static/CSVs" + searchstring + ".csv"  # filename to save the details
                 saveDataFrameToFile(dataframe=reviews, file_name=filename)
                 logger.info(f"New file {filename} created")
-
-
-                threadClass(prod_html=prod_html,required_reviews=required_reviews,searchstring=searchstring,review_count=review_count)
-
-
                 try:
                     total_reviews = int(prod_html.find_all('div', {'class': "_3UAT2v _16PBlm"})[0].text.replace('All', '').replace('reviews', ''))
                     if total_reviews < required_reviews:
@@ -325,11 +320,6 @@ def index():
                 except Exception as e:
                     print(e)
                     return "<h4> try after some time</h4>"
-
-
-                return render_template("results.html", reviews=reviews)
-
-                x = table.insert_many(reviews)
 
                 saveDataFrameToFile(dataframe=details, file_name=filename)
 
