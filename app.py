@@ -6,10 +6,7 @@ from flask import Flask, render_template, request
 from flask_cors import CORS, cross_origin
 
 from requests import get
-from random import randint
-from time import time
-from time import sleep
-import concurrent.futures
+
 import threading
 
 import pymongo
@@ -19,65 +16,6 @@ import json
 import pandas as pd
 
 logger = getLog("flipkart.py")
-
-
-def get_reviews(prod_html, commentates, searchstring):
-    """
-    This function scraps  the reviews of product
-    """
-
-    reviews = []
-    try:
-        product_name = prod_html.find_all('span', {'class': "B_NuCI"})[0].text
-        product_name = product_name[:product_name.find('(')]
-        # print(product_name)
-    except:
-        product_name = searchstring
-
-    for comment in commentates:
-        try:
-            name = comment.div.div.find_all('p', {'class': '_2sc7ZR _2V5EHH'})[0].text
-        except:
-            name = 'No Name'
-        try:
-            rating = comment.div.div.div.div.text
-        except:
-            rating = 'No Rating'
-        try:
-            commentHead = comment.div.div.div.p.text
-        except:
-            commentHead = 'No Comment Heading'
-        try:
-            comtag = comment.div.div.find_all('div', {'class': ''})
-            custComment = comtag[0].div.text
-        except:
-            custComment = "No Customer Comment"
-        try:
-            verification = comment.find_all("p", {"class": "_2mcZGG"})[0].text
-        except:
-            verification = "Not certified"
-        try:
-            review_period = comment.find_all("p", {"class": "_2sc7ZR"})[1].text
-        except:
-            review_period = "Not mentioned"
-        try:
-            likes = comment.find_all("span", {"class": "_3c3Px5"})[0].text
-        except:
-            likes = "0"
-        try:
-            dislikes = comment.find_all("span", {"class": "_3c3Px5"})[1].text
-        except:
-            dislikes = "0"
-            # fw.write(searchString + "," + name.replace(",", ":") + "," + rating + "," + commentHead.replace(",",":") + "," + custComment.replace( ",", ":") + "\n")
-        mydict = dict(Product=product_name, Name=name, Rating=rating, CommentHead=commentHead,
-                      Comment=custComment, Customer=verification, Period=review_period, Likes=likes,
-                      Dislikes=dislikes)
-
-        reviews.append(mydict)
-        # reviews = pd.DataFrame(reviews)
-
-    return reviews
-
 
 def saveDataFrameToFile(dataframe, file_name):
     """
@@ -170,10 +108,9 @@ def get_scatter_plot():
     return graphJSON
 
 
-def getrequiredreviews(prod_html, searchstring, required_reviews):
+def getrequiredreviews(prod_html, searchstring, required_reviews,review_count):
     """To get the next link"""
 
-    global max_reviews_pages
     try:
         next_link = prod_html.find("div", {"class": "_3UAT2v _16PBlm"})
         next_link = next_link.find_parent().attrs['href']
@@ -230,8 +167,7 @@ def getrequiredreviews(prod_html, searchstring, required_reviews):
                 # print(product_name)
             except:
                 product_name = searchstring
-
-            review_count = 0
+            #review_count = len(reviews)
             for b in cmt:
                 if review_count == required_reviews:
                     break
@@ -279,21 +215,49 @@ def getrequiredreviews(prod_html, searchstring, required_reviews):
 
     return details
 
+free_status = True
+collection_name = None
 
 app = Flask(__name__)
 
-free_status = True
-collection_name = None
-@timer
+
+#To avoid the time out issue on heroku
+class threadClass:
+
+    def __init__(self,prod_html, searchstring, required_reviews,review_count):
+        self.prod_html= prod_html
+        self.searchstring = searchstring
+        self.required_reviews = required_reviews
+        self.review_count = review_count
+        thread = threading.Thread(target=self.run, args=())
+        thread.daemon = True  # Daemonize thread
+        thread.start()  # Start the execution
+
+    def run(self):
+        global collection_name, free_status
+        free_status = False
+        self.collection_name = getrequiredreviews( prod_html=self. prod_html,searchstring=self.searchstring,
+                                              required_reviews=self.required_reviews,
+                                              review_count=self.review_count)
+
+        logger.info("Thread run completed")
+        free_status = True
 
 @app.route("/", methods=["POST", "GET"])
 @cross_origin()
 def index():
     if request.method == "POST":
-        global free_status
         global searchstring
+        global  free_status
+        ## To maintain the internal server issue on heroku
+        if free_status != True:
+            return "This website is executing some process. Kindly try after some time..."
+        else:
+            free_status = True
+
         searchstring = request.form['content'].replace("", "")
         required_reviews = int(request.form['expected_review'])
+
         flipkart_url = "https://www.flipkart.com/search?q=" + searchstring
         logger.info(f"Search begins for {searchstring}")
         uClient = uReq(flipkart_url)
@@ -302,11 +266,12 @@ def index():
         flipkart_html = bs(flipkartpage, "html.parser")
         boxes = flipkart_html.findAll("div", {"class": "_1AtVbE col-12-12"})
         del boxes[0:3]
-        box = boxes[0]
+        box = boxes[5]
         productLink = "https://www.flipkart.com" + box.div.div.div.a['href']
         prodRes = requests.get(productLink)
         prod_html = bs(prodRes.text, "html.parser")
         logger.info("Url hitted")
+        commentates = prod_html.find_all('div', {'class': "_16PBlm"})
 
 
         """ connecting with database"""
@@ -314,69 +279,62 @@ def index():
             dbConn = pymongo.MongoClient("mongodb://localhost:27017/")  # opening a connection to Mongo
             db = dbConn['new_scrapper']  # connecting to the database called crawlerDB
             logger.info("Database created")
-            reviews_db = db[searchstring].find({})  # searching the collection with the name same as the keyword
-            reviews_db = [i for i in reviews_db]
-            if len(reviews_db) > required_reviews:
-                reviews_db = [reviews_db[i] for i in range(0, required_reviews)]
-                saveDataFrameToFile(reviews_db, file_name="static/CSVs" + searchstring + ".csv")
-                return render_template('results.html', reviews=reviews_db)  # show the results to user
+            reviews = db[searchstring].find({})  # searching the collection with the name same as the keyword
+            reviews = [i for i in reviews]
+            if len(reviews) > required_reviews:
+                reviews = [reviews[i] for i in range(0, required_reviews)]
+                return render_template('results.html', reviews=reviews)  # show the results to user
             else:
-                commentates = prod_html.find_all('div', {'class': "_16PBlm"})
-
-                reviews = get_reviews(commentates, prod_html, searchstring)
-                threads = min(10,len(reviews))
-                print("thread Created")
-                with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-                    executor.map(get_reviews,commentates, prod_html, searchstring)
-
+                reviews=[]
+                review_count=len(reviews)
+                reviews = getrequiredreviews(prod_html, searchstring, required_reviews, review_count)
                 logger.info("Reviews Collected")
-                table = db[
-                    searchstring]  # creating a collection with the same name as search string. Tables and Collections are analogous.
+                table = db[searchstring]  # creating a collection with the same name as search string. Tables and Collections are analogous.
+                x = table.insert_many(reviews)
+
                 filename = "static/CSVs" + searchstring + ".csv"  # filename to save the details
+                saveDataFrameToFile(dataframe=reviews, file_name=filename)
                 logger.info(f"New file {filename} created")
-                start_time = time()
+
+                threadClass(prod_html=prod_html,required_reviews=required_reviews,searchstring=searchstring,review_count=review_count)
 
                 try:
-                    total_reviews = int(
-                        prod_html.find_all('div', {'class': "_3UAT2v _16PBlm"})[0].text.replace('All', '').replace(
-                            'reviews', ''))
-
+                    total_reviews = int(prod_html.find_all('div', {'class': "_3UAT2v _16PBlm"})[0].text.replace('All', '').replace('reviews', ''))
                     if total_reviews < required_reviews:
                         return "<h4>Enter valid number of Reviews</h4>"
 
-
                     elif len(reviews) > required_reviews:
+
                         reviews = [reviews[j] for j in range(0, required_reviews)]
                         x = table.insert_many(reviews)
                         logger.info(f"Required reviews {required_reviews} scrapped")
 
-                        threads2 = min(10, len(reviews))
-                        print("thread Created")
-                        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-                            executor.map(get_reviews, commentates, prod_html, searchstring)
-
                         saveDataFrameToFile(dataframe=reviews, file_name=filename)
                         logger.info("Data saved")
+                        threadClass(prod_html=prod_html, required_reviews=required_reviews, searchstring=searchstring,
+                                    review_count=review_count)
                         return render_template("results.html", reviews=reviews)
 
                     else:
-                        details = getrequiredreviews(required_reviews=required_reviews, prod_html=prod_html,
-                                                     searchstring=searchstring)
-
-                    x1 = table.insert_many(details)
-                    saveDataFrameToFile(dataframe=details, file_name=filename)
+                        threadClass(prod_html=prod_html, required_reviews=required_reviews, searchstring=searchstring,
+                                    review_count=review_count)
+                        return render_template("results.html", reviews=reviews)
+                        x = table.insert_many(reviews)
+                        saveDataFrameToFile(dataframe=details, file_name=filename)
 
                 except Exception as e:
                     print(e)
                     print("Error")
 
                 logger.info("Data Saved")
-                #saveDataFrameToFile(dataframe=details, file_name=filename)
+                saveDataFrameToFile(dataframe=details, file_name=filename)
 
-                return render_template("results.html", reviews=details)
+                return render_template("results.html", reviews=reviews)
 
 
         except:
+            threadClass(prod_html=prod_html, required_reviews=required_reviews, searchstring=searchstring,
+                        review_count=review_count)
             return render_template("error.html")
     else:
         return render_template("index.html")
@@ -421,6 +379,6 @@ def Dashboard():
     except Exception as e:
         print(e)
 
-
 if __name__ == "__main__":
     app.run()
+

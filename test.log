@@ -239,3 +239,127 @@
 2021-04-27 15:40:08,915:INFO:flipkart.py:Data Saved
 2021-04-27 15:41:16,786:INFO:flipkart.py:Bar graph created
 2021-04-27 15:41:16,832:INFO:flipkart.py:Scatter plot created
+2021-04-28 00:15:29,209:INFO:flipkart.py:Search begins for oneplus3
+2021-04-28 00:15:59,858:INFO:flipkart.py:Search begins for samsung
+2021-04-28 00:16:03,914:INFO:flipkart.py:Url hitted
+2021-04-28 00:16:05,055:INFO:flipkart.py:Database created
+2021-04-28 00:18:36,259:INFO:flipkart.py:Search begins for samsung
+2021-04-28 00:18:38,961:INFO:flipkart.py:Url hitted
+2021-04-28 00:18:38,993:INFO:flipkart.py:Database created
+2021-04-28 00:21:23,049:INFO:flipkart.py:Search begins for samsung
+2021-04-28 00:21:27,564:INFO:flipkart.py:Url hitted
+2021-04-28 00:21:27,596:INFO:flipkart.py:Database created
+2021-04-28 00:24:26,598:INFO:flipkart.py:Search begins for samsung
+2021-04-28 00:24:31,558:INFO:flipkart.py:Url hitted
+2021-04-28 00:24:31,573:INFO:flipkart.py:Database created
+2021-04-28 00:25:55,966:INFO:flipkart.py:Search begins for samsung
+2021-04-28 00:26:00,872:INFO:flipkart.py:Url hitted
+2021-04-28 00:26:00,900:INFO:flipkart.py:Database created
+2021-04-28 00:28:25,897:INFO:flipkart.py:Search begins for samsung
+2021-04-28 00:28:40,263:INFO:flipkart.py:Url hitted
+2021-04-28 00:28:40,287:INFO:flipkart.py:Database created
+2021-04-28 00:30:29,550:INFO:flipkart.py:Search begins for samsung
+2021-04-28 00:30:32,145:INFO:flipkart.py:Url hitted
+2021-04-28 00:30:32,174:INFO:flipkart.py:Database created
+2021-04-28 00:40:24,206:INFO:flipkart.py:Search begins for iphone
+2021-04-28 02:29:02,178:INFO:flipkart.py:Search begins for samsung
+2021-04-28 02:29:04,899:INFO:flipkart.py:Url hitted
+2021-04-28 02:29:05,110:INFO:flipkart.py:Database created
+2021-04-28 02:29:05,203:INFO:flipkart.py:Reviews Collected
+2021-04-28 02:29:05,203:INFO:flipkart.py:New file static/CSVssamsung.csv created
+2021-04-28 02:29:05,225:INFO:flipkart.py:Next link hitted
+2021-04-28 02:29:06,064:INFO:flipkart.py:'Number of requests was greater than expected.'
+2021-04-28 02:29:06,064:INFO:flipkart.py:Number of requests was greater than expected.
+2021-04-28 02:29:06,830:INFO:flipkart.py:Data Saved
+2021-04-28 02:29:40,111:INFO:flipkart.py:Bar graph created
+2021-04-28 02:29:40,114:INFO:flipkart.py:Bar graph created
+2021-04-28 02:29:40,884:INFO:flipkart.py:Scatter plot created
+2021-04-28 02:29:40,899:INFO:flipkart.py:Scatter plot created
+2021-04-28 02:32:10,718:INFO:flipkart.py:Search begins for samsung
+2021-04-28 02:32:12,677:INFO:flipkart.py:Url hitted
+2021-04-28 02:32:12,696:INFO:flipkart.py:Database created
+2021-04-28 02:32:12,743:INFO:flipkart.py:Reviews Collected
+2021-04-28 02:32:12,743:INFO:flipkart.py:New file static/CSVssamsung.csv created
+2021-04-28 02:32:12,758:INFO:flipkart.py:Next link hitted
+2021-04-28 02:32:13,568:INFO:flipkart.py:'Number of requests was greater than expected.'
+2021-04-28 02:32:13,569:INFO:flipkart.py:Number of requests was greater than expected.
+2021-04-28 02:32:13,653:INFO:flipkart.py:Data Saved
+2021-04-28 02:32:22,036:INFO:flipkart.py:Search begins for samsung
+2021-04-28 02:32:24,536:INFO:flipkart.py:Url hitted
+2021-04-28 02:32:24,548:INFO:flipkart.py:Database created
+2021-04-28 02:32:24,583:INFO:flipkart.py:Reviews Collected
+2021-04-28 02:32:24,583:INFO:flipkart.py:New file static/CSVssamsung.csv created
+2021-04-28 02:32:24,597:INFO:flipkart.py:Next link hitted
+2021-04-28 02:32:27,589:INFO:flipkart.py:Data Saved
+2021-04-28 02:35:29,936:INFO:flipkart.py:Search begins for samsung
+2021-04-28 02:35:33,004:INFO:flipkart.py:Url hitted
+2021-04-28 02:35:33,047:INFO:flipkart.py:Database created
+2021-04-28 02:36:46,630:INFO:flipkart.py:Search begins for iphone
+2021-04-28 02:36:51,036:INFO:flipkart.py:Url hitted
+2021-04-28 02:36:51,054:INFO:flipkart.py:Database created
+2021-04-28 02:36:51,097:INFO:flipkart.py:Reviews Collected
+2021-04-28 02:36:51,098:INFO:flipkart.py:New file static/CSVsiphone.csv created
+2021-04-28 02:36:51,122:INFO:flipkart.py:Next link hitted
+2021-04-28 02:36:56,412:INFO:flipkart.py:Data Saved
+2021-04-28 02:37:11,416:INFO:flipkart.py:Bar graph created
+2021-04-28 02:37:11,440:INFO:flipkart.py:Scatter plot created
+2021-04-28 02:37:26,748:INFO:flipkart.py:Bar graph created
+2021-04-28 02:37:26,763:INFO:flipkart.py:Scatter plot created
+2021-04-28 02:38:07,697:INFO:flipkart.py:Search begins for iphone
+2021-04-28 02:38:11,268:INFO:flipkart.py:Url hitted
+2021-04-28 02:38:11,288:INFO:flipkart.py:Database created
+2021-04-28 02:38:11,324:INFO:flipkart.py:Reviews Collected
+2021-04-28 02:38:11,324:INFO:flipkart.py:New file static/CSVsiphone.csv created
+2021-04-28 02:38:11,341:INFO:flipkart.py:Next link hitted
+2021-04-28 02:38:16,797:INFO:flipkart.py:Data Saved
+2021-04-28 02:38:20,141:INFO:flipkart.py:Bar graph created
+2021-04-28 02:38:20,160:INFO:flipkart.py:Scatter plot created
+2021-04-28 02:50:38,939:INFO:flipkart.py:Search begins for samsung
+2021-04-28 02:50:42,822:INFO:flipkart.py:Url hitted
+2021-04-28 02:50:42,838:INFO:flipkart.py:Database created
+2021-04-28 02:51:23,599:INFO:flipkart.py:Search begins for samsung
+2021-04-28 02:51:25,855:INFO:flipkart.py:Url hitted
+2021-04-28 02:51:25,867:INFO:flipkart.py:Database created
+2021-04-28 02:51:25,879:INFO:flipkart.py:Next link hitted
+2021-04-28 02:51:28,181:INFO:flipkart.py:Reviews Collected
+2021-04-28 02:51:28,182:INFO:flipkart.py:New file static/CSVssamsung.csv created
+2021-04-28 03:08:03,333:INFO:flipkart.py:Search begins for samsung
+2021-04-28 03:08:04,665:INFO:flipkart.py:Url hitted
+2021-04-28 03:08:04,685:INFO:flipkart.py:Database created
+2021-04-28 03:08:04,704:INFO:flipkart.py:Next link hitted
+2021-04-28 03:08:05,524:INFO:flipkart.py:'Number of requests was greater than expected.'
+2021-04-28 03:08:05,525:INFO:flipkart.py:Number of requests was greater than expected.
+2021-04-28 03:08:05,612:INFO:flipkart.py:Reviews Collected
+2021-04-28 03:08:05,612:INFO:flipkart.py:New file static/CSVssamsung.csv created
+2021-04-28 03:08:05,621:INFO:flipkart.py:Next link hitted
+2021-04-28 03:08:05,640:INFO:flipkart.py:Next link hitted
+2021-04-28 03:08:06,562:INFO:flipkart.py:'Number of requests was greater than expected.'
+2021-04-28 03:08:06,563:INFO:flipkart.py:Number of requests was greater than expected.
+2021-04-28 03:08:06,665:INFO:flipkart.py:Thread run completed
+2021-04-28 03:08:06,666:INFO:flipkart.py:'Number of requests was greater than expected.'
+2021-04-28 03:08:06,821:INFO:flipkart.py:Number of requests was greater than expected.
+2021-04-28 03:08:06,923:INFO:flipkart.py:Thread run completed
+2021-04-28 03:10:08,113:INFO:flipkart.py:Bar graph created
+2021-04-28 03:10:08,147:INFO:flipkart.py:Scatter plot created
+2021-04-28 03:11:32,513:INFO:flipkart.py:Search begins for oneplus
+2021-04-28 03:11:35,392:INFO:flipkart.py:Url hitted
+2021-04-28 03:11:35,409:INFO:flipkart.py:Database created
+2021-04-28 03:11:35,432:INFO:flipkart.py:Next link hitted
+2021-04-28 03:11:36,902:INFO:flipkart.py:Reviews Collected
+2021-04-28 03:11:37,659:INFO:flipkart.py:New file static/CSVsoneplus.csv created
+2021-04-28 03:11:37,698:INFO:flipkart.py:Next link hitted
+2021-04-28 03:11:37,727:INFO:flipkart.py:Next link hitted
+2021-04-28 03:11:39,294:INFO:flipkart.py:Thread run completed
+2021-04-28 03:11:39,737:INFO:flipkart.py:Thread run completed
+2021-04-28 03:13:37,911:INFO:flipkart.py:Search begins for oneplus
+2021-04-28 03:13:41,203:INFO:flipkart.py:Url hitted
+2021-04-28 03:13:41,221:INFO:flipkart.py:Database created
+2021-04-28 03:13:41,233:INFO:flipkart.py:Next link hitted
+2021-04-28 03:13:42,863:INFO:flipkart.py:Reviews Collected
+2021-04-28 03:13:44,219:INFO:flipkart.py:New file static/CSVsoneplus.csv created
+2021-04-28 03:13:44,235:INFO:flipkart.py:Next link hitted
+2021-04-28 03:13:44,262:INFO:flipkart.py:Next link hitted
+2021-04-28 03:13:45,824:INFO:flipkart.py:Thread run completed
+2021-04-28 03:13:45,875:INFO:flipkart.py:Thread run completed
+2021-04-28 03:14:34,023:INFO:flipkart.py:Bar graph created
+2021-04-28 03:14:34,041:INFO:flipkart.py:Scatter plot created
