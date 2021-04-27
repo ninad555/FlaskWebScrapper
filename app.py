@@ -284,6 +284,7 @@ app = Flask(__name__)
 
 free_status = True
 collection_name = None
+@timer
 
 @app.route("/", methods=["POST", "GET"])
 @cross_origin()
@@ -291,11 +292,6 @@ def index():
     if request.method == "POST":
         global free_status
         global searchstring
-        # To maintain the internal server issue on heroku
-        if free_status != True:
-            return "<h3>hThis website is executing some process. Kindly try after some time...</h3>"
-        else:
-            free_status = True
         searchstring = request.form['content'].replace("", "")
         required_reviews = int(request.form['expected_review'])
         flipkart_url = "https://www.flipkart.com/search?q=" + searchstring
@@ -375,7 +371,7 @@ def index():
                     print("Error")
 
                 logger.info("Data Saved")
-                saveDataFrameToFile(dataframe=details, file_name=filename)
+                #saveDataFrameToFile(dataframe=details, file_name=filename)
 
                 return render_template("results.html", reviews=details)
 
