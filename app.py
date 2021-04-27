@@ -280,8 +280,7 @@ def index():
             db = dbConn['new_scrapper']  # connecting to the database called crawlerDB
             logger.info("Database created")
             reviews = db[searchstring].find({})  # searching the collection with the name same as the keyword
-            #reviews = [i for i in reviews]
-            if len(reviews) > required_reviews:
+            if reviews.count() > required_reviews:
                 reviews = [reviews[i] for i in range(0, required_reviews)]
                 return render_template('results.html', reviews=reviews)  # show the results to user
             else:
