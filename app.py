@@ -295,7 +295,9 @@ def index():
                 saveDataFrameToFile(dataframe=reviews, file_name=filename)
                 logger.info(f"New file {filename} created")
 
+
                 threadClass(prod_html=prod_html,required_reviews=required_reviews,searchstring=searchstring,review_count=review_count)
+
 
                 try:
                     total_reviews = int(prod_html.find_all('div', {'class': "_3UAT2v _16PBlm"})[0].text.replace('All', '').replace('reviews', ''))
@@ -318,17 +320,18 @@ def index():
                         threadClass(prod_html=prod_html, required_reviews=required_reviews, searchstring=searchstring,
                                     review_count=review_count)
                         return render_template("results.html", reviews=reviews)
-                        x = table.insert_many(reviews)
-                        saveDataFrameToFile(dataframe=details, file_name=filename)
+
 
                 except Exception as e:
                     print(e)
-                    print("Error")
+                    return "<h4> try after some time</h4>"
 
-                logger.info("Data Saved")
-                saveDataFrameToFile(dataframe=details, file_name=filename)
 
                 return render_template("results.html", reviews=reviews)
+
+                x = table.insert_many(reviews)
+
+                saveDataFrameToFile(dataframe=details, file_name=filename)
 
 
         except:
