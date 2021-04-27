@@ -191,7 +191,7 @@ def getrequiredreviews(prod_html, searchstring, required_reviews):
     pages = [str(i) for i in range(1, max_reviews_pages)]
     req = 0
     details = []
-    start_time = time()
+    #start_time = time()
     total_reviews = int(
         prod_html.find_all('div', {'class': "_3UAT2v _16PBlm"})[0].text.replace('All', '').replace('reviews', ''))
 
@@ -211,9 +211,7 @@ def getrequiredreviews(prod_html, searchstring, required_reviews):
 
             " Controlling the request "
             try:
-                sleep(randint(8, 15))
                 req += 1
-                elapsed_time = time() - start_time
                 if req > (required_reviews / 10):
                     logger.info("'Number of requests was greater than expected.'")
                     logger.info('Number of requests was greater than expected.')
@@ -308,7 +306,7 @@ def index():
         flipkart_html = bs(flipkartpage, "html.parser")
         boxes = flipkart_html.findAll("div", {"class": "_1AtVbE col-12-12"})
         del boxes[0:3]
-        box = boxes[4]
+        box = boxes[0]
         productLink = "https://www.flipkart.com" + box.div.div.div.a['href']
         prodRes = requests.get(productLink)
         prod_html = bs(prodRes.text, "html.parser")
@@ -355,10 +353,12 @@ def index():
                         reviews = [reviews[j] for j in range(0, required_reviews)]
                         x = table.insert_many(reviews)
                         logger.info(f"Required reviews {required_reviews} scrapped")
+
                         threads2 = min(10, len(reviews))
                         print("thread Created")
                         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
                             executor.map(get_reviews, commentates, prod_html, searchstring)
+
                         saveDataFrameToFile(dataframe=reviews, file_name=filename)
                         logger.info("Data saved")
                         return render_template("results.html", reviews=reviews)
@@ -367,10 +367,6 @@ def index():
                         details = getrequiredreviews(required_reviews=required_reviews, prod_html=prod_html,
                                                      searchstring=searchstring)
 
-                        threads3 = min(10, len(details))
-                        print("thread Created")
-                        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-                            executor.map(getrequiredreviews, required_reviews, prod_html, searchstring)
                     x1 = table.insert_many(details)
                     saveDataFrameToFile(dataframe=details, file_name=filename)
 
