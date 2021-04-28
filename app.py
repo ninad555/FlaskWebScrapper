@@ -298,6 +298,8 @@ def index():
                     saveDataFrameToFile(dataframe=reviews, file_name=filename)
                     logger.info(f"New file {filename} created")
 
+                    threadClass(prod_html=prod_html, required_reviews=required_reviews, searchstring=searchstring)
+
                 except Exception as e:
                     print(e)
                 try:
@@ -313,6 +315,8 @@ def index():
 
                         saveDataFrameToFile(dataframe=reviews, file_name=filename)
                         logger.info("Data saved")
+
+                        threadClass(prod_html=prod_html, required_reviews=required_reviews, searchstring=searchstring)
                         return render_template("results.html", reviews=reviews)
 
                     else:
