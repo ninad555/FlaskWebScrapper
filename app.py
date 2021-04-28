@@ -108,7 +108,7 @@ def get_scatter_plot():
     return graphJSON
 
 
-def getrequiredreviews(prod_html, searchstring, required_reviews,review_count):
+def getrequiredreviews(prod_html, searchstring, required_reviews):
     """To get the next link"""
 
     try:
@@ -122,27 +122,28 @@ def getrequiredreviews(prod_html, searchstring, required_reviews,review_count):
         max_reviews_pages = mx[mx.find('of') + 2:]
         max_reviews_pages = max_reviews_pages.replace(',', '')
         max_reviews_pages = int(max_reviews_pages[:3])
-
     except:
         print("Error in response")
+
     pages = [str(i) for i in range(1, max_reviews_pages)]
     req = 0
     details = []
-    #start_time = time()
-    total_reviews = int(
-        prod_html.find_all('div', {'class': "_3UAT2v _16PBlm"})[0].text.replace('All', '').replace('reviews', ''))
 
     """ Scrapping required numbers of reviews"""
 
     """ Iterating throuhg requiured number of pages """
     for page in pages:
         if len(details) == required_reviews:
-            break
             logger.info("Scrap completed")
         else:
             """To get the next link"""
+
             try:
                 response = get(next_review_link + page)
+                temp_review_page_html = bs(response.text, 'html.parser')
+                bx = temp_review_page_html.find_all('div', {'class': '_1AtVbE col-12-12'})
+                del bx[0:1]
+                cmt = temp_review_page_html.find_all('div', {'class': "_27M-vq"})
             except:
                 logger.info("NO next link found")
 
@@ -151,12 +152,6 @@ def getrequiredreviews(prod_html, searchstring, required_reviews,review_count):
                 req += 1
                 if req > (required_reviews / 10):
                     logger.info("'Number of requests was greater than expected.'")
-                    logger.info('Number of requests was greater than expected.')
-
-                temp_review_page_html = bs(response.text, 'html.parser')
-                bx = temp_review_page_html.find_all('div', {'class': '_1AtVbE col-12-12'})
-                del bx[0:1]
-                cmt = temp_review_page_html.find_all('div', {'class': "_27M-vq"})
             except:
                 print("Error in box")
 
@@ -167,7 +162,8 @@ def getrequiredreviews(prod_html, searchstring, required_reviews,review_count):
                 # print(product_name)
             except:
                 product_name = searchstring
-            #review_count = len(reviews)
+
+            review_count = 0
             for b in cmt:
                 if review_count == required_reviews:
                     break
@@ -211,12 +207,15 @@ def getrequiredreviews(prod_html, searchstring, required_reviews,review_count):
                                   Dislikes=dislikes)
 
                     details.append(mydict)
+                    print(len(details))
                     review_count = review_count + 1
 
     return details
 
+
 free_status = True
 collection_name = None
+
 
 app = Flask(__name__)
 
@@ -224,11 +223,10 @@ app = Flask(__name__)
 #To avoid the time out issue on heroku
 class threadClass:
 
-    def __init__(self,prod_html, searchstring, required_reviews,review_count):
-        self.prod_html= prod_html
+    def __init__(self, prod_html, searchstring, required_reviews):
+        self.prod_html = prod_html
         self.searchstring = searchstring
         self.required_reviews = required_reviews
-        self.review_count = review_count
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True  # Daemonize thread
         thread.start()  # Start the execution
@@ -237,8 +235,7 @@ class threadClass:
         global collection_name, free_status
         free_status = False
         self.collection_name = getrequiredreviews( prod_html=self. prod_html,searchstring=self.searchstring,
-                                              required_reviews=self.required_reviews,
-                                              review_count=self.review_count)
+                                              required_reviews=self.required_reviews)
 
         logger.info("Thread run completed")
         free_status = True
@@ -257,6 +254,7 @@ def index():
 
         searchstring = request.form['content'].replace("", "")
         required_reviews = int(request.form['expected_review'])
+        print(required_reviews)
 
         flipkart_url = "https://www.flipkart.com/search?q=" + searchstring
         logger.info(f"Search begins for {searchstring}")
@@ -271,29 +269,37 @@ def index():
         prodRes = requests.get(productLink)
         prod_html = bs(prodRes.text, "html.parser")
         logger.info("Url hitted")
-        commentates = prod_html.find_all('div', {'class': "_16PBlm"})
-
+        #commentates = prod_html.find_all('div', {'class': "_16PBlm"})
 
         """ connecting with database"""
+
         try:
             dbConn = pymongo.MongoClient("mongodb://localhost:27017/")  # opening a connection to Mongo
             db = dbConn['new_scrapper']  # connecting to the database called crawlerDB
             logger.info("Database created")
             reviews = db[searchstring].find({})  # searching the collection with the name same as the keyword
+            reviews = [ i for i in reviews ]
             if len(reviews) > required_reviews:
                 reviews = [reviews[i] for i in range(0, required_reviews)]
-                return render_template('results.html', reviews=reviews)  # show the results to user
-            else:
-                reviews=[]
-                review_count=len(reviews)
-                reviews = getrequiredreviews(prod_html, searchstring, required_reviews, review_count)
-                logger.info("Reviews Collected")
-                table = db[searchstring]  # creating a collection with the same name as search string. Tables and Collections are analogous.
-                x = table.insert_many(reviews)
 
                 filename = "static/CSVs" + searchstring + ".csv"  # filename to save the details
                 saveDataFrameToFile(dataframe=reviews, file_name=filename)
-                logger.info(f"New file {filename} created")
+
+                return render_template('results.html', reviews=reviews)  # show the results to user
+            else:
+                try:
+                    #review_count=len(reviews)
+                    reviews = getrequiredreviews(prod_html, searchstring, required_reviews)
+                    print(len(reviews))
+                    logger.info("Reviews Collected")
+                    table = db[searchstring]  # creating a collection with the same name as search string. Tables and Collections are analogous.
+                    x = table.insert_many(reviews)
+                    filename = "static/CSVs" + searchstring + ".csv"  # filename to save the details
+                    saveDataFrameToFile(dataframe=reviews, file_name=filename)
+                    logger.info(f"New file {filename} created")
+
+                except Exception as e:
+                    print(e)
                 try:
                     total_reviews = int(prod_html.find_all('div', {'class': "_3UAT2v _16PBlm"})[0].text.replace('All', '').replace('reviews', ''))
                     if total_reviews < required_reviews:
@@ -307,13 +313,14 @@ def index():
 
                         saveDataFrameToFile(dataframe=reviews, file_name=filename)
                         logger.info("Data saved")
-                        threadClass(prod_html=prod_html, required_reviews=required_reviews, searchstring=searchstring,
-                                    review_count=review_count)
                         return render_template("results.html", reviews=reviews)
 
                     else:
-                        threadClass(prod_html=prod_html, required_reviews=required_reviews, searchstring=searchstring,
-                                    review_count=review_count)
+                        len(reviews) == required_reviews
+
+                        threadClass(prod_html=prod_html,required_reviews=required_reviews,searchstring=searchstring)
+
+                        #reviews = getrequiredreviews(prod_html, searchstring, required_reviews)
                         return render_template("results.html", reviews=reviews)
 
 
@@ -323,9 +330,8 @@ def index():
 
                 saveDataFrameToFile(dataframe=details, file_name=filename)
 
-
         except:
-            return render_template("results.html")
+            return render_template("error.html")
     else:
         return render_template("index.html")
 
