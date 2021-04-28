@@ -274,6 +274,15 @@ def index():
         threadClass(prod_html=prod_html, required_reviews=required_reviews, searchstring=searchstring)
         """ connecting with database"""
 
+        try:
+            dbConn = pymongo.MongoClient("mongodb://localhost:27017/")  # opening a connection to Mongo
+            db = dbConn['new_scrapper'] # connecting to the database called crawlerDB
+            reviews = db[searchstring].find({}) # searching the collection with the name same as the keyword
+            if reviews.count() > required_reviews: # if there is a collection with searched keyword and it has records in it
+                reviews = [ reviews[i] for i in range(1,required_reviews)]
+                return render_template('results.html',reviews=reviews) # show the results to user
+        except:
+            return "<h4> Error in Database Connection"
 
         try:
             #review_count=len(reviews)
