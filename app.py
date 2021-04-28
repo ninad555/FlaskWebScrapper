@@ -247,10 +247,10 @@ def index():
         global searchstring
         global  free_status
         ## To maintain the internal server issue on heroku
-        if free_status != True:
-            return "This website is executing some process. Kindly try after some time..."
-        else:
-            free_status = True
+        #if free_status != True:
+         #   return "This website is executing some process. Kindly try after some time..."
+        #else:
+        #    free_status = True
 
         searchstring = request.form['content'].replace("", "")
         required_reviews = int(request.form['expected_review'])
