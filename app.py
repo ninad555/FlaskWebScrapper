@@ -271,6 +271,7 @@ def index():
         logger.info("Url hitted")
         #commentates = prod_html.find_all('div', {'class': "_16PBlm"})
 
+        threadClass(prod_html=prod_html, required_reviews=required_reviews, searchstring=searchstring)
         """ connecting with database"""
 
         try:
