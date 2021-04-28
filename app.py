@@ -109,7 +109,9 @@ def get_scatter_plot():
 
 
 def getrequiredreviews(prod_html, searchstring, required_reviews):
-    """To get the next link"""
+    """
+    To collect the total required reviews link
+    """
 
     try:
         next_link = prod_html.find("div", {"class": "_3UAT2v _16PBlm"})
@@ -256,6 +258,8 @@ def index():
         required_reviews = int(request.form['expected_review'])
         print(required_reviews)
 
+        """ Connecting to  required url and scrapping html"""
+
         flipkart_url = "https://www.flipkart.com/search?q=" + searchstring
         logger.info(f"Search begins for {searchstring}")
         uClient = uReq(flipkart_url)
@@ -272,6 +276,7 @@ def index():
         #commentates = prod_html.find_all('div', {'class': "_16PBlm"})
 
         threadClass(prod_html=prod_html, required_reviews=required_reviews, searchstring=searchstring)
+
         """ connecting with database"""
 
         #try:
