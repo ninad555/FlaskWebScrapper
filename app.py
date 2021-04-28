@@ -234,7 +234,7 @@ class threadClass:
     def run(self):
         global collection_name, free_status
         free_status = False
-        self.collection_name = getrequiredreviews( prod_html=self. prod_html,searchstring=self.searchstring,
+        collection_name = self.getrequiredreviews( prod_html=self. prod_html,searchstring=self.searchstring,
                                               required_reviews=self.required_reviews)
 
         logger.info("Thread run completed")
@@ -274,69 +274,54 @@ def index():
         threadClass(prod_html=prod_html, required_reviews=required_reviews, searchstring=searchstring)
         """ connecting with database"""
 
-        try:
-            dbConn = pymongo.MongoClient("mongodb://localhost:27017/")  # opening a connection to Mongo
-            db = dbConn['new_scrapper']  # connecting to the database called crawlerDB
-            logger.info("Database created")
-            reviews = db[searchstring].find({})  # searching the collection with the name same as the keyword
-            reviews = [ i for i in reviews ]
-            if len(reviews) > required_reviews:
-                reviews = [reviews[i] for i in range(0, required_reviews)]
 
-                filename = "static/CSVs" + searchstring + ".csv"  # filename to save the details
+        try:
+            #review_count=len(reviews)
+            reviews = getrequiredreviews(prod_html, searchstring, required_reviews)
+            print(len(reviews))
+            logger.info("Reviews Collected")
+            #table = db[searchstring]  # creating a collection with the same name as search string. Tables and Collections are analogous.
+            #x = table.insert_many(reviews)
+            filename = "static/CSVs" + searchstring + ".csv"  # filename to save the details
+            saveDataFrameToFile(dataframe=reviews, file_name=filename)
+            logger.info(f"New file {filename} created")
+
+            threadClass(prod_html=prod_html, required_reviews=required_reviews, searchstring=searchstring)
+
+        except Exception as e:
+            print(e)
+        try:
+            total_reviews = int(prod_html.find_all('div', {'class': "_3UAT2v _16PBlm"})[0].text.replace('All', '').replace('reviews', ''))
+            if total_reviews < required_reviews:
+                return "<h4>Enter valid number of Reviews</h4>"
+
+            elif len(reviews) > required_reviews:
+
+                reviews = [reviews[j] for j in range(0, required_reviews)]
+                #x = table.insert_many(reviews)
+                logger.info(f"Required reviews {required_reviews} scrapped")
+
                 saveDataFrameToFile(dataframe=reviews, file_name=filename)
+                logger.info("Data saved")
 
                 threadClass(prod_html=prod_html, required_reviews=required_reviews, searchstring=searchstring)
-                return render_template('results.html', reviews=reviews)  # show the results to user
+                return render_template("results.html", reviews=reviews)
 
-            
             else:
-                try:
-                    #review_count=len(reviews)
-                    reviews = getrequiredreviews(prod_html, searchstring, required_reviews)
-                    print(len(reviews))
-                    logger.info("Reviews Collected")
-                    table = db[searchstring]  # creating a collection with the same name as search string. Tables and Collections are analogous.
-                    x = table.insert_many(reviews)
-                    filename = "static/CSVs" + searchstring + ".csv"  # filename to save the details
-                    saveDataFrameToFile(dataframe=reviews, file_name=filename)
-                    logger.info(f"New file {filename} created")
+                len(reviews) == required_reviews
 
-                    threadClass(prod_html=prod_html, required_reviews=required_reviews, searchstring=searchstring)
+                threadClass(prod_html=prod_html,required_reviews=required_reviews,searchstring=searchstring)
 
-                except Exception as e:
-                    print(e)
-                try:
-                    total_reviews = int(prod_html.find_all('div', {'class': "_3UAT2v _16PBlm"})[0].text.replace('All', '').replace('reviews', ''))
-                    if total_reviews < required_reviews:
-                        return "<h4>Enter valid number of Reviews</h4>"
-
-                    elif len(reviews) > required_reviews:
-
-                        reviews = [reviews[j] for j in range(0, required_reviews)]
-                        x = table.insert_many(reviews)
-                        logger.info(f"Required reviews {required_reviews} scrapped")
-
-                        saveDataFrameToFile(dataframe=reviews, file_name=filename)
-                        logger.info("Data saved")
-
-                        threadClass(prod_html=prod_html, required_reviews=required_reviews, searchstring=searchstring)
-                        return render_template("results.html", reviews=reviews)
-
-                    else:
-                        len(reviews) == required_reviews
-
-                        threadClass(prod_html=prod_html,required_reviews=required_reviews,searchstring=searchstring)
-
-                        #reviews = getrequiredreviews(prod_html, searchstring, required_reviews)
-                        return render_template("results.html", reviews=reviews)
+                #reviews = getrequiredreviews(prod_html, searchstring, required_reviews)
+                return render_template("results.html", reviews=reviews)
 
 
-                except Exception as e:
-                    print(e)
-                    return "<h4> try after some time</h4>"
+        except Exception as e:
+            print(e)
+            return render_template("error.html")
 
-                #saveDataFrameToFile(dataframe=details, file_name=filename)
+
+        #saveDataFrameToFile(dataframe=details, file_name=filename)
 
         except:
             return render_template("error.html")
