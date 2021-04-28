@@ -285,7 +285,10 @@ def index():
                 filename = "static/CSVs" + searchstring + ".csv"  # filename to save the details
                 saveDataFrameToFile(dataframe=reviews, file_name=filename)
 
+                threadClass(prod_html=prod_html, required_reviews=required_reviews, searchstring=searchstring)
                 return render_template('results.html', reviews=reviews)  # show the results to user
+
+            
             else:
                 try:
                     #review_count=len(reviews)
@@ -332,7 +335,7 @@ def index():
                     print(e)
                     return "<h4> try after some time</h4>"
 
-                saveDataFrameToFile(dataframe=details, file_name=filename)
+                #saveDataFrameToFile(dataframe=details, file_name=filename)
 
         except:
             return render_template("error.html")

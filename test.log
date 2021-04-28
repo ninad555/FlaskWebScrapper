@@ -375,3 +375,83 @@
 2021-04-28 23:47:58,713:INFO:flipkart.py:Thread run completed
 2021-04-28 23:48:26,769:INFO:flipkart.py:Bar graph created
 2021-04-28 23:48:26,793:INFO:flipkart.py:Scatter plot created
+2021-04-29 00:56:56,757:INFO:flipkart.py:Search begins for iphone
+2021-04-29 00:57:08,200:INFO:flipkart.py:Url hitted
+2021-04-29 00:57:08,934:INFO:flipkart.py:Database created
+2021-04-29 00:57:09,859:INFO:flipkart.py:Next link hitted
+2021-04-29 00:57:11,442:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,442:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,442:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,442:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,442:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,442:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,442:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,442:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,442:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,443:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,443:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,443:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,443:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,443:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,443:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,443:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,443:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,444:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,444:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,444:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,444:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,444:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:11,445:INFO:flipkart.py:Reviews Collected
+2021-04-29 00:57:13,316:INFO:flipkart.py:New file static/CSVsiphone.csv created
+2021-04-29 00:57:13,365:INFO:flipkart.py:Next link hitted
+2021-04-29 00:57:13,396:INFO:flipkart.py:Next link hitted
+2021-04-29 00:57:14,894:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,894:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,894:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,894:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,895:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,895:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,895:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,895:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,895:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,895:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,895:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,895:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,895:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,895:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,896:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,896:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,896:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,896:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,896:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,896:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,896:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,896:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:14,897:INFO:flipkart.py:Thread run completed
+2021-04-29 00:57:15,508:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,508:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,508:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,509:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,509:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,509:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,509:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,509:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,509:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,509:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,509:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,509:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,509:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,509:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,509:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,509:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,509:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,509:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,509:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,510:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,510:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,510:INFO:flipkart.py:Scrap completed
+2021-04-29 00:57:15,510:INFO:flipkart.py:Thread run completed
+2021-04-29 00:59:41,216:INFO:flipkart.py:Bar graph created
+2021-04-29 00:59:41,223:INFO:flipkart.py:Bar graph created
+2021-04-29 00:59:44,384:INFO:flipkart.py:Scatter plot created
+2021-04-29 00:59:44,393:INFO:flipkart.py:Scatter plot created
